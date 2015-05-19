@@ -1,0 +1,7 @@
+/Users/fred/Projects/ambientband-android-app/AmbientBand/Application/build/intermediates/classes/debug
+/Users/fred/Projects/ambientband-android-app/AmbientBand/Application/build/intermediates/pre-dexed/debug/internal_impl-21.0.2-f93816ffad3d969f8cb73c33b8cc5da506e3667f.jar
+/Users/fred/Projects/ambientband-android-app/AmbientBand/Application/build/intermediates/pre-dexed/debug/support-annotations-21.0.2-e60e5cc10ff1cbf67f42daa5b4f2730bbe2f5b19.jar
+/Users/fred/Projects/ambientband-android-app/AmbientBand/Application/build/intermediates/pre-dexed/debug/classes-da4a3e2c9701a6956866f07d3ef0695bca3ff2f7.jar
+/Users/fred/Projects/ambientband-android-app/AmbientBand/Application/build/intermediates/pre-dexed/debug/classes-f990975501f6b58ef999b1fd010b7bcef62809d5.jar
+/Users/fred/Projects/ambientband-android-app/AmbientBand/Application/build/intermediates/pre-dexed/debug/internal_impl-21.0.2-5d12e9608dca5e4a9146272f3b294ccb0387d4d1.jar
+/Users/fred/Projects/ambientband-android-app/AmbientBand/Application/build/intermediates/pre-dexed/debug/classes-dcbdf440cc372850abb5dee2ac640dbec23ed597.jar
