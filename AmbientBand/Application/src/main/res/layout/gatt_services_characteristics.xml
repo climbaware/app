@@ -73,11 +73,77 @@
         android:layout_height="wrap_content"
         android:text="Notify"
         android:id="@+id/notify"
-        android:layout_gravity="center_horizontal"
         android:onClick="sendNotification" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal">
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="vibrate short"
+            android:id="@+id/bt_vibrate_short"
+            android:layout_row="0"
+            android:layout_column="0" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="on short"
+            android:id="@+id/bt_on_short"
+            android:layout_row="1"
+            android:layout_column="0" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="vibrate normal"
+            android:id="@+id/bt_vibrate_normal"
+            android:layout_row="0"
+            android:layout_column="1" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="vibrate long"
+            android:id="@+id/bt_vibrate_long"
+            android:layout_row="0"
+            android:layout_column="2" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="on normal"
+            android:id="@+id/bt_on_normal"
+            android:layout_row="1"
+            android:layout_column="1" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="on long"
+            android:id="@+id/bt_on_long"
+            android:layout_row="1"
+            android:layout_column="2" />
+    </GridLayout>
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="v&apos;n&apos;b short"
+        android:id="@+id/bt_vnb_short" />
 
     <ExpandableListView android:id="@+id/gatt_services_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="151dp"/>
 
 </LinearLayout>

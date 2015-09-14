@@ -116,38 +116,45 @@ containing a value of this type.
         public static final int contentPaddingTop=0x7f010009;
     }
     public static final class color {
-        public static final int cardview_dark_background=0x7f040000;
-        public static final int cardview_light_background=0x7f040001;
-        public static final int cardview_shadow_end_color=0x7f040002;
-        public static final int cardview_shadow_start_color=0x7f040003;
+        public static final int cardview_dark_background=0x7f060000;
+        public static final int cardview_light_background=0x7f060001;
+        public static final int cardview_shadow_end_color=0x7f060002;
+        public static final int cardview_shadow_start_color=0x7f060003;
     }
     public static final class dimen {
-        public static final int cardview_compat_inset_shadow=0x7f050000;
-        public static final int cardview_default_elevation=0x7f050001;
-        public static final int cardview_default_radius=0x7f050002;
-        public static final int horizontal_page_margin=0x7f050003;
-        public static final int margin_huge=0x7f050004;
-        public static final int margin_large=0x7f050005;
-        public static final int margin_medium=0x7f050006;
-        public static final int margin_small=0x7f050007;
-        public static final int margin_tiny=0x7f050008;
-        public static final int vertical_page_margin=0x7f050009;
+        public static final int cardview_compat_inset_shadow=0x7f040002;
+        public static final int cardview_default_elevation=0x7f040003;
+        public static final int cardview_default_radius=0x7f040004;
+        public static final int horizontal_page_margin=0x7f040000;
+        public static final int margin_huge=0x7f040005;
+        public static final int margin_large=0x7f040006;
+        public static final int margin_medium=0x7f040007;
+        public static final int margin_small=0x7f040008;
+        public static final int margin_tiny=0x7f040009;
+        public static final int vertical_page_margin=0x7f040001;
     }
     public static final class drawable {
         public static final int ic_launcher=0x7f020000;
         public static final int tile=0x7f020001;
     }
     public static final class id {
+        public static final int bt_on_long=0x7f090009;
+        public static final int bt_on_normal=0x7f090008;
+        public static final int bt_on_short=0x7f090005;
+        public static final int bt_vibrate_long=0x7f090007;
+        public static final int bt_vibrate_normal=0x7f090006;
+        public static final int bt_vibrate_short=0x7f090004;
+        public static final int bt_vnb_short=0x7f09000a;
         public static final int connection_state=0x7f090001;
         public static final int data_value=0x7f090002;
         public static final int device_address=0x7f090000;
-        public static final int device_name=0x7f090005;
-        public static final int gatt_services_list=0x7f090004;
-        public static final int menu_connect=0x7f090007;
-        public static final int menu_disconnect=0x7f090008;
-        public static final int menu_refresh=0x7f090006;
-        public static final int menu_scan=0x7f090009;
-        public static final int menu_stop=0x7f09000a;
+        public static final int device_name=0x7f09000c;
+        public static final int gatt_services_list=0x7f09000b;
+        public static final int menu_connect=0x7f09000e;
+        public static final int menu_disconnect=0x7f09000f;
+        public static final int menu_refresh=0x7f09000d;
+        public static final int menu_scan=0x7f090010;
+        public static final int menu_stop=0x7f090011;
         public static final int notify=0x7f090003;
     }
     public static final class layout {
@@ -160,35 +167,35 @@ containing a value of this type.
         public static final int main=0x7f080001;
     }
     public static final class string {
-        public static final int app_name=0x7f060000;
-        public static final int ble_not_supported=0x7f060001;
-        public static final int connected=0x7f060002;
-        public static final int disconnected=0x7f060003;
-        public static final int error_bluetooth_not_supported=0x7f060004;
-        public static final int intro_message=0x7f060005;
-        public static final int label_data=0x7f060006;
-        public static final int label_device_address=0x7f060007;
-        public static final int label_state=0x7f060008;
-        public static final int menu_connect=0x7f060009;
-        public static final int menu_disconnect=0x7f06000a;
-        public static final int menu_scan=0x7f06000b;
-        public static final int menu_stop=0x7f06000c;
-        public static final int no_data=0x7f06000d;
-        public static final int title_devices=0x7f06000e;
-        public static final int unknown_characteristic=0x7f06000f;
-        public static final int unknown_device=0x7f060010;
-        public static final int unknown_service=0x7f060011;
+        public static final int app_name=0x7f070000;
+        public static final int ble_not_supported=0x7f070001;
+        public static final int connected=0x7f070002;
+        public static final int disconnected=0x7f070003;
+        public static final int error_bluetooth_not_supported=0x7f070004;
+        public static final int intro_message=0x7f070005;
+        public static final int label_data=0x7f070006;
+        public static final int label_device_address=0x7f070007;
+        public static final int label_state=0x7f070008;
+        public static final int menu_connect=0x7f070009;
+        public static final int menu_disconnect=0x7f07000a;
+        public static final int menu_scan=0x7f07000b;
+        public static final int menu_stop=0x7f07000c;
+        public static final int no_data=0x7f07000d;
+        public static final int title_devices=0x7f07000e;
+        public static final int unknown_characteristic=0x7f07000f;
+        public static final int unknown_device=0x7f070010;
+        public static final int unknown_service=0x7f070011;
     }
     public static final class style {
-        public static final int AppTheme=0x7f070000;
-        public static final int CardView=0x7f070001;
-        public static final int CardView_Dark=0x7f070002;
-        public static final int CardView_Light=0x7f070003;
-        public static final int Theme_Base=0x7f070004;
-        public static final int Theme_Sample=0x7f070005;
-        public static final int Widget=0x7f070006;
-        public static final int Widget_SampleMessage=0x7f070007;
-        public static final int Widget_SampleMessageTile=0x7f070008;
+        public static final int AppTheme=0x7f050002;
+        public static final int CardView=0x7f050003;
+        public static final int CardView_Dark=0x7f050004;
+        public static final int CardView_Light=0x7f050005;
+        public static final int Theme_Base=0x7f050001;
+        public static final int Theme_Sample=0x7f050006;
+        public static final int Widget=0x7f050007;
+        public static final int Widget_SampleMessage=0x7f050000;
+        public static final int Widget_SampleMessageTile=0x7f050008;
     }
     public static final class styleable {
         /** Attributes that can be used with a CardView.

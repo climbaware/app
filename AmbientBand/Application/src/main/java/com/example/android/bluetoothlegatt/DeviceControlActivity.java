@@ -31,10 +31,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,7 +73,7 @@ public class DeviceControlActivity extends Activity {
 
     public void sendNotification(View v) {
 
-       BluetoothGattService ambientBandService = mBluetoothLeService.getService(UUID.fromString(AMBIENT_BAND_UUID_SERVICE));
+        BluetoothGattService ambientBandService = mBluetoothLeService.getService(UUID.fromString(AMBIENT_BAND_UUID_SERVICE));
         if (ambientBandService == null) {
             System.out.println("service null"); return;
         }
@@ -79,10 +81,79 @@ public class DeviceControlActivity extends Activity {
         if (ambiendBandCharacteristic == null) {
             System.out.println("characteristic null"); return;
         }
-        ambiendBandCharacteristic.setValue(new byte[] {0x00,0x00,0x00,0x07,0x00,0x00, (byte) 0xff,(byte)0xff,(byte)0xff,(byte)0xf8});
+        //ambiendBandCharacteristic.setValue(new byte[] {0x00,0x00,0x00,0x01, 0x02, 0x0B , (byte) 0xB8, (byte) (byte) 0xff, (byte) (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xfe});
+        ambiendBandCharacteristic.setValue(fullOnOffString("110",1000,255));
         boolean status = mBluetoothLeService.writeCharacteristic(ambiendBandCharacteristic);
         System.out.println("Write Status: " + status);
+
+        System.out.println(getOnOffString("010", 1000,255));
     }
+
+
+    public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                    + Character.digit(s.charAt(i+1), 16));
+        }
+        return data;
+    }
+
+    public byte[] getOnOffString(String ids, int duration, int intensity){
+        byte[] result = new byte[4];
+
+        byte b = (byte) Integer.parseInt(ids, 2);
+
+
+        result[0] = b;
+
+
+        ByteBuffer bb = ByteBuffer.allocate(4);
+        bb.putInt(duration);
+        byte[] duration_res = bb.array();
+        result[1] = duration_res[2];
+        result[2] = duration_res[3];
+
+        bb = ByteBuffer.allocate(4);
+        bb.putInt(intensity);
+        byte[] intensity_ar = bb.array();
+        result[3] = intensity_ar[3];
+
+
+
+
+
+        return result;
+    }
+
+    public byte[] fullOnOffString( String ids, int duration, int intensity){
+
+        byte[] onoff = getOnOffString(ids, duration, intensity);
+
+        // build the string
+        byte[] result = new byte[4*3];
+        result[0] = (byte) 0x00;
+        result[1] = (byte) 0x00;
+        result[2] = (byte) 0x00;
+        result[3] = (byte) 0x01;
+
+        result[4] = onoff[0];
+        result[5] = onoff[1];
+        result[6] = onoff[2];
+        result[7] = onoff[3];
+
+        result[8] = (byte) 0xff;
+        result[9] = (byte) 0xff;
+        result[10] = (byte) 0xff;
+        result[11] = (byte) 0xfe;
+
+        return result;
+
+    }
+
+
+
 
 
     // Code to manage Service lifecycle.
@@ -172,6 +243,102 @@ public class DeviceControlActivity extends Activity {
         mDataField.setText(R.string.no_data);
     }
 
+
+    private void sendByteString(byte[] bs){
+        BluetoothGattService ambientBandService = mBluetoothLeService.getService(UUID.fromString(AMBIENT_BAND_UUID_SERVICE));
+        if (ambientBandService == null) {
+            System.out.println("service null"); return;
+        }
+        BluetoothGattCharacteristic ambiendBandCharacteristic = ambientBandService.getCharacteristic(UUID.fromString(AMBIENT_BAND_UUID_CHAR));
+        if (ambiendBandCharacteristic == null) {
+            System.out.println("characteristic null"); return;
+        }
+        //ambiendBandCharacteristic.setValue(new byte[] {0x00,0x00,0x00,0x01, 0x02, 0x0B , (byte) 0xB8, (byte) (byte) 0xff, (byte) (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xfe});
+
+
+
+        ambiendBandCharacteristic.setValue(bs);
+        boolean status = mBluetoothLeService.writeCharacteristic(ambiendBandCharacteristic);
+        System.out.println("Write Status: " + status);
+
+    }
+
+    private void sendBlink(String ids, int duration, int intensity){
+        sendByteString(fullOnOffString(ids, duration, intensity));
+
+    }
+
+
+    public class BlinkSequenceItem{
+        public String getIds() {
+            return ids;
+        }
+
+        public int getDuration() {
+            return duration;
+        }
+
+        public int getIntensity() {
+            return intensity;
+        }
+
+        private final String ids;
+        private final int duration;
+        private final int intensity;
+
+        public BlinkSequenceItem(String ids, int duration, int intensity){
+            this.ids = ids;
+            this.duration = duration;
+            this.intensity = intensity;
+        }
+    }
+
+
+    public void sendBlinkSquence(BlinkSequenceItem[] sequence){
+
+
+
+        // build the string
+        byte[] result = new byte[4*2 + 4*sequence.length];
+        result[0] = (byte) 0x00;
+        result[1] = (byte) 0x00;
+        result[2] = (byte) 0x00;
+        result[3] = (byte) 0x01;
+
+        int current_index = 4;
+
+        for(BlinkSequenceItem bsi : sequence){
+            byte[] onoff = getOnOffString(bsi.getIds(), bsi.getDuration(), bsi.getIntensity());
+
+            result[current_index] = onoff[0];
+            current_index++;
+            result[current_index] = onoff[1];
+            current_index++;
+            result[current_index] = onoff[2];
+            current_index++;
+            result[current_index] = onoff[3];
+            current_index++;
+
+        }
+
+
+        result[current_index] = (byte) 0xff;
+        current_index++;
+
+        result[current_index] = (byte) 0xff;
+        current_index++;
+
+        result[current_index] = (byte) 0xff;
+        current_index++;
+
+        result[current_index] = (byte) 0xfe;
+
+
+        sendByteString(result);
+
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -192,6 +359,65 @@ public class DeviceControlActivity extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+
+
+
+        final Button button_vibrate_short = (Button) findViewById(R.id.bt_vibrate_short);
+        button_vibrate_short.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                sendBlink("1000", 250, 255);
+            }
+        });
+
+        final Button button_vibrate_normal = (Button) findViewById(R.id.bt_vibrate_normal);
+        button_vibrate_normal.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                sendBlink("1000", 500, 255);
+            }
+        });
+
+        final Button button_vibrate_long = (Button) findViewById(R.id.bt_vibrate_long);
+        button_vibrate_long.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                sendBlink("1000", 1000, 255);
+            }
+        });
+
+
+
+        final Button button_on_short = (Button) findViewById(R.id.bt_on_short);
+        button_on_short.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                sendBlink("0111", 1000, 255);
+            }
+        });
+
+        final Button button_on_normal = (Button) findViewById(R.id.bt_on_normal);
+        button_on_normal.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                sendBlink("0111",2000,255);
+            }
+        });
+
+        final Button button_on_long = (Button) findViewById(R.id.bt_on_long);
+        button_on_long.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                sendBlink("0111",3000,255);
+            }
+        });
+
+        final Button vnb_short = (Button) findViewById(R.id.bt_vnb_short);
+        vnb_short.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                sendBlinkSquence(new BlinkSequenceItem[]{
+                        new BlinkSequenceItem("1111", 250,1024),
+                        new BlinkSequenceItem("0000", 250,1024),
+                        new BlinkSequenceItem("1111", 250,1024),
+
+                });
+            }
+        });
+
     }
 
     @Override

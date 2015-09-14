@@ -251,7 +251,7 @@ public class DeviceScanActivity extends ListActivity {
 
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-            if(device.getName().contains("AmbientBand")) {
+            //if(device.getName().contains("AmbientBand")) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -259,7 +259,7 @@ public class DeviceScanActivity extends ListActivity {
                         mLeDeviceListAdapter.notifyDataSetChanged();
                     }
                 });
-            }
+            //}
 
 
         }
