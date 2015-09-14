@@ -58,10 +58,8 @@ public class DeviceControlActivity extends Activity {
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
 
     private TextView mConnectionState;
-    private TextView mDataField;
     private String mDeviceName;
     private String mDeviceAddress;
-    private ExpandableListView mGattServicesList;
     private BluetoothLeService mBluetoothLeService;
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
@@ -246,8 +244,6 @@ public class DeviceControlActivity extends Activity {
     };
 
     private void clearUI() {
-        mGattServicesList.setAdapter((SimpleExpandableListAdapter) null);
-        mDataField.setText(R.string.no_data);
     }
 
 
@@ -397,16 +393,21 @@ public class DeviceControlActivity extends Activity {
 
 
         final Button nextbutton = (Button) findViewById(R.id.study_next);
-
+        final Button noResponseButton = (Button) findViewById(R.id.study_no_response);
 
         // study_no_response (the climber did not react to the the audo/tactile/light feedback)
-        findViewById(R.id.study_no_response).setOnClickListener(new View.OnClickListener() {
+        noResponseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
                 timerIsRunning = false;
                 mChronometer.reset();
 
                 nextbutton.setText("Send Notification");
+
+                if(modalityIndex == 2) {
+                    nextbutton.setEnabled(false);
+                    noResponseButton.setEnabled(false);
+                }
 
                 // TODO log to  file: no response
 
@@ -418,9 +419,6 @@ public class DeviceControlActivity extends Activity {
 
         // next
         nextbutton.setOnClickListener(new View.OnClickListener() {
-
-
-
 
             public void onClick(View v) {
                 String participant_group = (String) mGroupSpinner.getSelectedItem();
@@ -439,7 +437,8 @@ public class DeviceControlActivity extends Activity {
                     timerIsRunning = true;
 
 
-                    nextbutton.setText("Climber responded.");
+                    nextbutton.setText("Climber responded");
+
 
                     sendNextFeedBack(participant_group);
 
@@ -454,6 +453,11 @@ public class DeviceControlActivity extends Activity {
                     nextbutton.setText("Send Notification");
 
                     // todo log time to file
+
+                    if(modalityIndex == 2) {
+                        nextbutton.setEnabled(false);
+                        noResponseButton.setEnabled(false);
+                    }
 
                     Toast.makeText(getBaseContext(), time,
                             Toast.LENGTH_LONG).show();
@@ -472,6 +476,8 @@ public class DeviceControlActivity extends Activity {
                 modalityIndex = 0;
                 nextbutton.setText("Start Study");
 
+                noResponseButton.setEnabled(true);
+                nextbutton.setEnabled(true);
 
 
             }
