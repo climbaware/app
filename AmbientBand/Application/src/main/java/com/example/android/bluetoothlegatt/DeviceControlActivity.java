@@ -412,7 +412,7 @@ public class DeviceControlActivity extends Activity {
                     nextbutton.setEnabled(false);
                     noResponseButton.setEnabled(false);
                     studyIsStarted = false;
-                    writeToLog("sudy finihsed");
+                    writeToLog("sudy finished");
 
                 }
 
@@ -491,6 +491,8 @@ public class DeviceControlActivity extends Activity {
                 nextbutton.setEnabled(true);
 
                 writeToLog("reset initiated by study coordinator");
+
+                log.setText("");
 
             }
         });
