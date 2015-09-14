@@ -33,6 +33,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.Spinner;
@@ -366,6 +367,49 @@ public class DeviceControlActivity extends Activity {
 
 
 
+
+        /*
+          Study Control
+
+         */
+        final Chronometer chronometer = (Chronometer) findViewById(R.id.chronometer);
+        final boolean timerIsRunning = false;
+        final boolean studyIsStarted = false;
+
+        // next
+        final Button nextbutton = (Button) findViewById(R.id.study_next);
+        nextbutton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(!timerIsRunning) {
+                    //timerIsRunning = true;
+                    chronometer.start();
+
+                    if(!studyIsStarted)
+                        nextbutton.setText("Give Feedback");
+                } else {
+
+                }
+
+
+            }
+        });
+
+        // reset
+        findViewById(R.id.study_reset).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                chronometer.start();
+
+            }
+        });
+
+
+
+
+
+
+        /*
+            Device Control
+         */
 
         final Button button_vibrate_short = (Button) findViewById(R.id.bt_vibrate_short);
         button_vibrate_short.setOnClickListener(new View.OnClickListener() {

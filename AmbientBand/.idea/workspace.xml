@@ -38,7 +38,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="gatt_services_characteristics.xml" pinned="false" current-in-tab="true">
+      <file leaf-file-name="gatt_services_characteristics.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Application/src/main/res/layout/gatt_services_characteristics.xml">
           <provider selected="true" editor-type-id="android-designer">
             <state />
@@ -65,18 +65,49 @@
         <entry file="file://$PROJECT_DIR$/Application/src/main/java/com/example/android/bluetoothlegatt/DeviceControlActivity.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="170" column="73" selection-start-line="170" selection-start-column="68" selection-end-line="170" selection-end-column="73" />
+              <caret line="397" column="37" selection-start-line="397" selection-start-column="37" selection-end-line="397" selection-end-column="37" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#7024#7042#0" expanded="true" />
+                <element signature="e#7245#7266#0" expanded="true" />
+                <element signature="e#9853#9869#0" expanded="true" />
+                <element signature="e#14176#14542#0" expanded="true" />
+                <element signature="e#14541#14542#0" expanded="true" />
+                <element signature="e#14621#14753#0" expanded="true" />
+                <element signature="e#14752#14753#0" expanded="true" />
+                <element signature="e#14951#15090#0" expanded="true" />
+                <element signature="e#15089#15090#0" expanded="true" />
+                <element signature="e#15235#15374#0" expanded="true" />
+                <element signature="e#15373#15374#0" expanded="true" />
+                <element signature="e#15513#15653#0" expanded="true" />
+                <element signature="e#15652#15653#0" expanded="true" />
+                <element signature="e#15782#15922#0" expanded="true" />
+                <element signature="e#15921#15922#0" expanded="true" />
+                <element signature="e#16052#16190#0" expanded="true" />
+                <element signature="e#16189#16190#0" expanded="true" />
+                <element signature="e#16314#16452#0" expanded="true" />
+                <element signature="e#16451#16452#0" expanded="true" />
+                <element signature="e#16568#16936#0" expanded="true" />
+                <element signature="e#16935#16936#0" expanded="true" />
+                <element signature="e#18653#18801#0" expanded="true" />
+                <element signature="e#18800#18801#0" expanded="true" />
+                <element signature="e#19201#19251#0" expanded="true" />
+                <element signature="e#19289#19346#0" expanded="true" />
+                <element signature="e#19422#19447#0" expanded="true" />
+                <element signature="e#19559#19595#0" expanded="true" />
+                <element signature="e#19870#19886#0" expanded="true" />
+                <element signature="e#20285#20310#0" expanded="true" />
+                <element signature="e#20529#20558#0" expanded="true" />
+                <element signature="e#20826#20842#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SampleGattAttributes.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SampleGattAttributes.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Application/src/main/java/com/example/android/bluetoothlegatt/SampleGattAttributes.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
+            <state vertical-scroll-proportion="0.280083">
               <caret line="23" column="13" selection-start-line="23" selection-start-column="13" selection-end-line="23" selection-end-column="13" />
               <folding />
             </state>
@@ -1449,8 +1480,8 @@
         <option value="$PROJECT_DIR$/Application/build.gradle" />
         <option value="$PROJECT_DIR$/Application/build/generated/source/r/debug/com/example/android/bluetoothlegatt/R.java" />
         <option value="$PROJECT_DIR$/Application/src/main/res/values/strings.xml" />
-        <option value="$PROJECT_DIR$/Application/src/main/java/com/example/android/bluetoothlegatt/DeviceControlActivity.java" />
         <option value="$PROJECT_DIR$/Application/src/main/res/layout/gatt_services_characteristics.xml" />
+        <option value="$PROJECT_DIR$/Application/src/main/java/com/example/android/bluetoothlegatt/DeviceControlActivity.java" />
       </list>
     </option>
   </component>
@@ -1836,10 +1867,10 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22339028" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3298292" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3298292" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24964131" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24964131" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28120518" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
@@ -1965,10 +1996,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Application/src/main/java/com/example/android/bluetoothlegatt/SampleGattAttributes.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="23" column="13" selection-start-line="23" selection-start-column="13" selection-end-line="23" selection-end-column="13" />
+    <entry file="file://$PROJECT_DIR$/Application/src/main/res/layout/gatt_services_characteristics.xml">
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-3.3333333">
+          <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1984,20 +2018,48 @@
     <entry file="file://$PROJECT_DIR$/Application/src/main/java/com/example/android/bluetoothlegatt/DeviceControlActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="170" column="73" selection-start-line="170" selection-start-column="68" selection-end-line="170" selection-end-column="73" />
+          <caret line="397" column="37" selection-start-line="397" selection-start-column="37" selection-end-line="397" selection-end-column="37" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#7024#7042#0" expanded="true" />
+            <element signature="e#7245#7266#0" expanded="true" />
+            <element signature="e#9853#9869#0" expanded="true" />
+            <element signature="e#14176#14542#0" expanded="true" />
+            <element signature="e#14541#14542#0" expanded="true" />
+            <element signature="e#14621#14753#0" expanded="true" />
+            <element signature="e#14752#14753#0" expanded="true" />
+            <element signature="e#14951#15090#0" expanded="true" />
+            <element signature="e#15089#15090#0" expanded="true" />
+            <element signature="e#15235#15374#0" expanded="true" />
+            <element signature="e#15373#15374#0" expanded="true" />
+            <element signature="e#15513#15653#0" expanded="true" />
+            <element signature="e#15652#15653#0" expanded="true" />
+            <element signature="e#15782#15922#0" expanded="true" />
+            <element signature="e#15921#15922#0" expanded="true" />
+            <element signature="e#16052#16190#0" expanded="true" />
+            <element signature="e#16189#16190#0" expanded="true" />
+            <element signature="e#16314#16452#0" expanded="true" />
+            <element signature="e#16451#16452#0" expanded="true" />
+            <element signature="e#16568#16936#0" expanded="true" />
+            <element signature="e#16935#16936#0" expanded="true" />
+            <element signature="e#18653#18801#0" expanded="true" />
+            <element signature="e#18800#18801#0" expanded="true" />
+            <element signature="e#19201#19251#0" expanded="true" />
+            <element signature="e#19289#19346#0" expanded="true" />
+            <element signature="e#19422#19447#0" expanded="true" />
+            <element signature="e#19559#19595#0" expanded="true" />
+            <element signature="e#19870#19886#0" expanded="true" />
+            <element signature="e#20285#20310#0" expanded="true" />
+            <element signature="e#20529#20558#0" expanded="true" />
+            <element signature="e#20826#20842#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Application/src/main/res/layout/gatt_services_characteristics.xml">
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.3333333">
-          <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+    <entry file="file://$PROJECT_DIR$/Application/src/main/java/com/example/android/bluetoothlegatt/SampleGattAttributes.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.280083">
+          <caret line="23" column="13" selection-start-line="23" selection-start-column="13" selection-end-line="23" selection-end-column="13" />
           <folding />
         </state>
       </provider>
