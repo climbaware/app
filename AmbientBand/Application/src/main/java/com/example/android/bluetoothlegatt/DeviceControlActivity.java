@@ -33,6 +33,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.Spinner;
@@ -70,6 +71,8 @@ public class DeviceControlActivity extends Activity {
     protected boolean timerIsRunning = false;
     protected boolean studyIsStarted = false;
     protected int modalityIndex = 0;
+
+    private EditText log;
 
 
     private final String LIST_NAME = "NAME";
@@ -366,7 +369,7 @@ public class DeviceControlActivity extends Activity {
                 R.array.participant_groups, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-
+        log = (EditText) findViewById(R.id.timelog);
 
 
         mGroupSpinner = (Spinner) findViewById(R.id.participant_group);
@@ -394,6 +397,7 @@ public class DeviceControlActivity extends Activity {
 
         final Button nextbutton = (Button) findViewById(R.id.study_next);
         final Button noResponseButton = (Button) findViewById(R.id.study_no_response);
+        noResponseButton.setEnabled(false);
 
         // study_no_response (the climber did not react to the the audo/tactile/light feedback)
         noResponseButton.setOnClickListener(new View.OnClickListener() {
@@ -404,12 +408,15 @@ public class DeviceControlActivity extends Activity {
 
                 nextbutton.setText("Send Notification");
 
-                if(modalityIndex == 2) {
+                if(modalityIndex == 3) {
                     nextbutton.setEnabled(false);
                     noResponseButton.setEnabled(false);
+                    studyIsStarted = false;
+                    writeToLog("sudy finihsed");
+
                 }
 
-                // TODO log to  file: no response
+                writeToLog("no_response");
 
 
             }
@@ -426,6 +433,7 @@ public class DeviceControlActivity extends Activity {
                 if(!studyIsStarted) {
                     nextbutton.setText("Send Notification");
                     studyIsStarted = true;
+                    writeToLog("study_started");
                     return;
                 }
 
@@ -438,6 +446,7 @@ public class DeviceControlActivity extends Activity {
 
 
                     nextbutton.setText("Climber responded");
+                    noResponseButton.setEnabled(true);
 
 
                     sendNextFeedBack(participant_group);
@@ -452,11 +461,14 @@ public class DeviceControlActivity extends Activity {
 
                     nextbutton.setText("Send Notification");
 
-                    // todo log time to file
+                    writeToLog(time);
 
-                    if(modalityIndex == 2) {
+                    if(modalityIndex == 3) {
                         nextbutton.setEnabled(false);
                         noResponseButton.setEnabled(false);
+                        studyIsStarted = false;
+                        writeToLog("sudy finihsed");
+
                     }
 
                     Toast.makeText(getBaseContext(), time,
@@ -476,9 +488,9 @@ public class DeviceControlActivity extends Activity {
                 modalityIndex = 0;
                 nextbutton.setText("Start Study");
 
-                noResponseButton.setEnabled(true);
                 nextbutton.setEnabled(true);
 
+                writeToLog("reset initiated by study coordinator");
 
             }
         });
@@ -578,7 +590,13 @@ public class DeviceControlActivity extends Activity {
         }
     }
 
+    private void writeToLog(String text) {
+        log.append("\n" + text);
+    }
+
     private void visualModality() {
+        writeToLog("sent visual cue");
+
         sendBlink("0111",3000,255);
         Toast.makeText(getBaseContext(), "Sent VISUAL cue.",
                 Toast.LENGTH_LONG).show();
@@ -586,6 +604,7 @@ public class DeviceControlActivity extends Activity {
     }
 
     private void tactileModality() {
+        writeToLog("sent tactile cue");
         sendBlink("1000", 1000, 255);
         Toast.makeText(getBaseContext(), "Sent TACTILE cue.",
                 Toast.LENGTH_LONG).show();
@@ -594,6 +613,7 @@ public class DeviceControlActivity extends Activity {
 
 
     private void audioModality() {
+        writeToLog("sent audible cue");
         Toast.makeText(getBaseContext(), "Sent AUDITIVE cue.",
                 Toast.LENGTH_LONG).show();
     }
