@@ -25,4 +25,4 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="12dp"/>
-</LinearLayout><!-- From: file:/Users/felixkosmalla/Documents/Repositories/ambientband-android-app/AmbientBand/Application/src/main/res/layout/listitem_device.xml -->
+</LinearLayout><!-- From: file:/Users/fred/Projects/climbaware-android/AmbientBand/Application/src/main/res/layout/listitem_device.xml -->

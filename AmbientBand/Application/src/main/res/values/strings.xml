@@ -33,4 +33,22 @@
     <string name="menu_disconnect">Disconnect</string>
     <string name="menu_scan">Scan</string>
     <string name="menu_stop">Stop</string>
+
+    <string-array name="participant_groups">
+        <item>A-EH-VSL</item>
+        <item>B-EH-VLS</item>
+        <item>C-EH-SVL</item>
+        <item>D-EH-SLV</item>
+        <item>E-EH-LVS</item>
+        <item>F-EH-LSV</item>
+        <item>G-HE-VSL</item>
+        <item>H-HE-VLS</item>
+        <item>I-HE-SVL</item>
+        <item>J-HE-SLV</item>
+        <item>K-HE-LVS</item>
+        <item>L-HE-LSV</item>
+    </string-array>
+
+
+
 </resources>
