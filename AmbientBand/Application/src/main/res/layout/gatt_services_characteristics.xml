@@ -49,14 +49,29 @@
                 android:id="@+id/participant_group"
                 android:spinnerMode="dropdown" />
 
-            <Button
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="191dp"
-                android:layout_height="wrap_content"
-                android:text="Start Study"
-                android:id="@+id/study_next"
-                android:layout_row="0"
-                android:layout_column="2" />
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal">
+
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="191dp"
+                    android:layout_height="wrap_content"
+                    android:text="Start Study"
+                    android:id="@+id/study_next"
+                    android:layout_row="0"
+                    android:layout_column="0" />
+
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="191dp"
+                    android:layout_height="wrap_content"
+                    android:text="No Response"
+                    android:id="@+id/study_no_response"
+                    android:layout_row="0"
+                    android:layout_column="1" />
+            </GridLayout>
 
             <GridLayout
                 android:layout_width="match_parent"
@@ -82,12 +97,13 @@
                     android:layout_column="0"
                     android:layout_marginRight="10dp" />
 
-                <Chronometer
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <com.example.android.bluetoothlegatt.Chronometer
                     android:id="@+id/chronometer"
-                    android:layout_row="1"
-                    android:layout_column="2" />
+                    android:layout_width="158dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="40sp"
+                    android:text="Chronometer"
+                    android:gravity="center"/>
 
             </GridLayout>
 

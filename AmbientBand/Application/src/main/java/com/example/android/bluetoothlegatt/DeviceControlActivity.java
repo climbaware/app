@@ -33,11 +33,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Chronometer;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -67,6 +67,12 @@ public class DeviceControlActivity extends Activity {
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private boolean mConnected = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
+
+    private Spinner mGroupSpinner;
+    protected boolean timerIsRunning = false;
+    protected boolean studyIsStarted = false;
+    protected int modalityIndex = 0;
+
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
@@ -367,26 +373,90 @@ public class DeviceControlActivity extends Activity {
 
 
 
+        mGroupSpinner = (Spinner) findViewById(R.id.participant_group);
+
+
+
 
         /*
           Study Control
-
          */
-        final Chronometer chronometer = (Chronometer) findViewById(R.id.chronometer);
-        final boolean timerIsRunning = false;
-        final boolean studyIsStarted = false;
+        final Chronometer mChronometer = (Chronometer) findViewById(R.id.chronometer);
+
+        //IF you want to stop your chrono after X seconds or minutes.
+//        mChronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+//            public void onChronometerTick(Chronometer chronometer) {
+//                if (chronometer.getText().toString().equalsIgnoreCase("00:05:0")) { //When reaches 5 seconds.
+//                    //Define here what happens when the Chronometer reaches the time above.
+//                    chronometer.stop();
+//                    Toast.makeText(getBaseContext(), "Reached the end.",
+//                            Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
+
+
+        final Button nextbutton = (Button) findViewById(R.id.study_next);
+
+
+        // study_no_response (the climber did not react to the the audo/tactile/light feedback)
+        findViewById(R.id.study_no_response).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                timerIsRunning = false;
+                mChronometer.reset();
+
+                nextbutton.setText("Send Notification");
+
+                // TODO log to  file: no response
+
+
+            }
+
+        });
+
 
         // next
-        final Button nextbutton = (Button) findViewById(R.id.study_next);
         nextbutton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if(!timerIsRunning) {
-                    //timerIsRunning = true;
-                    chronometer.start();
 
-                    if(!studyIsStarted)
-                        nextbutton.setText("Give Feedback");
-                } else {
+
+
+
+            public void onClick(View v) {
+                String participant_group = (String) mGroupSpinner.getSelectedItem();
+
+                if(!studyIsStarted) {
+                    nextbutton.setText("Send Notification");
+                    studyIsStarted = true;
+                    return;
+                }
+
+
+
+                if(!timerIsRunning) { // timer was not running, study coordinator sent modality feedback to climber
+
+                    mChronometer.start();
+                    timerIsRunning = true;
+
+
+                    nextbutton.setText("Climber responded.");
+
+                    sendNextFeedBack(participant_group);
+
+
+
+                } else { // timer was running, climber reacted to feedback
+                    mChronometer.stop();
+                    String time = mChronometer.getText().toString();
+                    timerIsRunning = false;
+                    mChronometer.reset();
+
+                    nextbutton.setText("Send Notification");
+
+                    // todo log time to file
+
+                    Toast.makeText(getBaseContext(), time,
+                            Toast.LENGTH_LONG).show();
 
                 }
 
@@ -397,10 +467,21 @@ public class DeviceControlActivity extends Activity {
         // reset
         findViewById(R.id.study_reset).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                chronometer.start();
+                mChronometer.reset();
+
+                modalityIndex = 0;
+                nextbutton.setText("Start Study");
+
+
 
             }
         });
+
+
+
+
+
+
 
 
 
@@ -468,6 +549,49 @@ public class DeviceControlActivity extends Activity {
         });
 
     }
+
+    private void sendNextFeedBack(String participant_group) {
+        String[] pdata = participant_group.split("-");
+        String group_number = pdata[0];
+        String climbing_grade = pdata[1];
+        String notification_modalities = pdata[2];
+        if (modalityIndex < notification_modalities.length()) {
+            switch (notification_modalities.charAt(modalityIndex)) {
+                case 'V':
+                    tactileModality();
+                    break;
+                case 'S':
+                    audioModality();
+                    break;
+                case 'L':
+                    visualModality();
+                    break;
+
+            }
+            modalityIndex++;
+        }
+    }
+
+    private void visualModality() {
+        sendBlink("0111",3000,255);
+        Toast.makeText(getBaseContext(), "Sent VISUAL cue.",
+                Toast.LENGTH_LONG).show();
+
+    }
+
+    private void tactileModality() {
+        sendBlink("1000", 1000, 255);
+        Toast.makeText(getBaseContext(), "Sent TACTILE cue.",
+                Toast.LENGTH_LONG).show();
+
+    }
+
+
+    private void audioModality() {
+        Toast.makeText(getBaseContext(), "Sent AUDITIVE cue.",
+                Toast.LENGTH_LONG).show();
+    }
+
 
     @Override
     protected void onResume() {
