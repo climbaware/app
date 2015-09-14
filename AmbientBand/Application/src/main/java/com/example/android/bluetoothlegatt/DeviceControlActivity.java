@@ -31,6 +31,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -399,6 +400,24 @@ public class DeviceControlActivity extends Activity {
         final Button noResponseButton = (Button) findViewById(R.id.study_no_response);
         noResponseButton.setEnabled(false);
 
+
+        mGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mChronometer.reset();
+                modalityIndex = 0;
+                nextbutton.setText("Start Study");
+                nextbutton.setEnabled(true);
+                log.setText("");
+                writeToLog("changed group");
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         // study_no_response (the climber did not react to the the audo/tactile/light feedback)
         noResponseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -489,10 +508,10 @@ public class DeviceControlActivity extends Activity {
                 nextbutton.setText("Start Study");
 
                 nextbutton.setEnabled(true);
+                log.setText("");
 
                 writeToLog("reset initiated by study coordinator");
 
-                log.setText("");
 
             }
         });
