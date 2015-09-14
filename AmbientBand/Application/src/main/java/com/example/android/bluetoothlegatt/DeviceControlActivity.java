@@ -433,7 +433,7 @@ public class DeviceControlActivity extends Activity {
                 if(!studyIsStarted) {
                     nextbutton.setText("Send Notification");
                     studyIsStarted = true;
-                    writeToLog("study_started");
+                    writeToLog("study_started for: " + participant_group);
                     return;
                 }
 
