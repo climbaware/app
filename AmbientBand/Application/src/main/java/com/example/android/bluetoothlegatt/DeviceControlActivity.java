@@ -20,7 +20,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
@@ -93,7 +95,23 @@ public class DeviceControlActivity extends Activity {
     public static String AMBIENT_BAND_UUID_CHAR = "00002222-0000-1000-8000-00805f9b34fb";
     private SoundPoolPlayer sound;
 
+    static String[] CLIMBERANSWERS = new String[] {"tactile intensity 1", "tactile intensity 2", "tactile intensity 3", "visible intensity 1", "visible intensity 2", "visible intensity 3", "audible intensity 1", "audible intensity 2", "audible intensity 3"};
 
+    void showDialog() {
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        DialogFragment newFragment = new ClimberResponseDialog();
+        newFragment.show(ft, "dialog");
+    }
 
     /*
      * Climber Response Dialog
@@ -103,8 +121,10 @@ public class DeviceControlActivity extends Activity {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle("What did the climber respond?")
-                    .setItems(new String[] {"a", "b", "c"}, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+                    .setItems(CLIMBERANSWERS, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int i) {
+
+                            writeToLog(CLIMBERANSWERS[i]);
 
                             // The 'which' argument contains the index position
                             // of the selected item
@@ -465,7 +485,7 @@ public class DeviceControlActivity extends Activity {
                     noResponseButton.setEnabled(false);
                     studyIsStarted = false;
                     writeToLog("sudy finished");
-                    shareStudyResults();
+                    //shareStudyResults();
                 }
 
                 writeToLog("no_response");
@@ -507,11 +527,6 @@ public class DeviceControlActivity extends Activity {
 
                     nextbutton.setText("Climber responded");
                     noResponseButton.setEnabled(true);
-
-
-                    DialogFragment fragment = new ClimberResponseDialog();
-                    fragment.sh
-
                     sendNextFeedBack(participant_group);
 
 
@@ -522,16 +537,19 @@ public class DeviceControlActivity extends Activity {
                     timerIsRunning = false;
                     mChronometer.reset();
 
+                    // show climber response dialog
+                    showDialog();
+
                     nextbutton.setText("Send Notification");
 
                     writeToLog(time);
 
-                    if(modalityIndex == 3) {
+                    if (modalityIndex == 3) {
                         nextbutton.setEnabled(false);
                         noResponseButton.setEnabled(false);
                         studyIsStarted = false;
                         writeToLog("sudy finihsed");
-                        shareStudyResults();
+                        //shareStudyResults();
                     }
 
                     Toast.makeText(getBaseContext(), time,
