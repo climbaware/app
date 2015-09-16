@@ -2,32 +2,18 @@
 <items version="2" >
 
     <item
+        jar="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.2/jars/libs/internal_impl-21.0.2.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="962e8b12569c56dbdcf8367eb4eac8bb129cd18f">
+        <dex dex="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/pre-dexed/debug/internal_impl-21.0.2-ff591c0bf5213e0664790397771aba5f6e6265c0.jar" />
+    </item>
+    <item
         jar="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.2/jars/classes.jar"
         jumboMode="false"
         revision="22.0.1"
         sha1="d1bf02de1c56d942e7a9d093b8610ba1ef4128e3">
         <dex dex="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/pre-dexed/debug/classes-aa293f92cd60421ea4d5858b559fa0f3c85816ec.jar" />
-    </item>
-    <item
-        jar="/Users/fred/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/21.0.2/support-annotations-21.0.2.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="99373741f99a0556ee293c41e8faa1ca3ae8a4e6">
-        <dex dex="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/pre-dexed/debug/support-annotations-21.0.2-a12a182a9ee201936c57d5c6135e07c2f0f86dc1.jar" />
-    </item>
-    <item
-        jar="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/exploded-aar/com.android.support/support-v13/21.0.2/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="61965ae058916e6a57950dd61b0164dc866af19a">
-        <dex dex="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/pre-dexed/debug/classes-1081604a61bcd5a6d9966d0bb9c760087b6afd7c.jar" />
-    </item>
-    <item
-        jar="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/exploded-aar/com.android.support/support-v13/21.0.2/jars/libs/internal_impl-21.0.2.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="9346da9fb778af9e451211bbc3541daced174ba7">
-        <dex dex="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/pre-dexed/debug/internal_impl-21.0.2-641d9a1cc3e45b5974ddbf4415c10f6de636b193.jar" />
     </item>
     <item
         jar="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/exploded-aar/com.android.support/cardview-v7/21.0.2/jars/classes.jar"
@@ -37,11 +23,25 @@
         <dex dex="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/pre-dexed/debug/classes-350e4dcb5d19874020793f0f731df8abc1d045e6.jar" />
     </item>
     <item
-        jar="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.2/jars/libs/internal_impl-21.0.2.jar"
+        jar="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/exploded-aar/com.android.support/support-v13/21.0.2/jars/libs/internal_impl-21.0.2.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="962e8b12569c56dbdcf8367eb4eac8bb129cd18f">
-        <dex dex="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/pre-dexed/debug/internal_impl-21.0.2-ff591c0bf5213e0664790397771aba5f6e6265c0.jar" />
+        sha1="9346da9fb778af9e451211bbc3541daced174ba7">
+        <dex dex="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/pre-dexed/debug/internal_impl-21.0.2-641d9a1cc3e45b5974ddbf4415c10f6de636b193.jar" />
+    </item>
+    <item
+        jar="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/exploded-aar/com.android.support/support-v13/21.0.2/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="61965ae058916e6a57950dd61b0164dc866af19a">
+        <dex dex="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/pre-dexed/debug/classes-1081604a61bcd5a6d9966d0bb9c760087b6afd7c.jar" />
+    </item>
+    <item
+        jar="/Users/fred/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/21.0.2/support-annotations-21.0.2.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="99373741f99a0556ee293c41e8faa1ca3ae8a4e6">
+        <dex dex="/Users/fred/Projects/climbaware-android/AmbientBand/Application/build/intermediates/pre-dexed/debug/support-annotations-21.0.2-a12a182a9ee201936c57d5c6135e07c2f0f86dc1.jar" />
     </item>
 
 </items>

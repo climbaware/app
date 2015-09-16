@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.Random;
 
 /**
  * For a given BLE device, this Activity provides the user interface to connect, display data,
@@ -81,6 +82,20 @@ public class DeviceControlActivity extends Activity {
 
     public static String AMBIENT_BAND_UUID_SERVICE = "00002220-0000-1000-8000-00805f9b34fb";
     public static String AMBIENT_BAND_UUID_CHAR = "00002222-0000-1000-8000-00805f9b34fb";
+
+    // Implementing Fisher–Yates shuffle
+    static void shuffleArray(int[] ar)
+    {
+        Random rnd = new Random();
+        for (int i = ar.length - 1; i > 0; i--)
+        {
+            int index = rnd.nextInt(i + 1);
+            // Simple swap
+            int a = ar[index];
+            ar[index] = ar[i];
+            ar[i] = a;
+        }
+    }
 
     public void sendNotification(View v) {
 
@@ -303,8 +318,6 @@ public class DeviceControlActivity extends Activity {
 
     public void sendBlinkSquence(BlinkSequenceItem[] sequence){
 
-
-
         // build the string
         byte[] result = new byte[4*2 + 4*sequence.length];
         result[0] = (byte) 0x00;
@@ -376,26 +389,10 @@ public class DeviceControlActivity extends Activity {
         mGroupSpinner = (Spinner) findViewById(R.id.participant_group);
 
 
-
-
         /*
           Study Control
          */
         final Chronometer mChronometer = (Chronometer) findViewById(R.id.chronometer);
-
-        //IF you want to stop your chrono after X seconds or minutes.
-//        mChronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-//            public void onChronometerTick(Chronometer chronometer) {
-//                if (chronometer.getText().toString().equalsIgnoreCase("00:05:0")) { //When reaches 5 seconds.
-//                    //Define here what happens when the Chronometer reaches the time above.
-//                    chronometer.stop();
-//                    Toast.makeText(getBaseContext(), "Reached the end.",
-//                            Toast.LENGTH_LONG).show();
-//                }
-//            }
-//        });
-
-
         final Button nextbutton = (Button) findViewById(R.id.study_next);
         final Button noResponseButton = (Button) findViewById(R.id.study_no_response);
         noResponseButton.setEnabled(false);
@@ -444,6 +441,8 @@ public class DeviceControlActivity extends Activity {
         });
 
 
+
+
         // next
         nextbutton.setOnClickListener(new View.OnClickListener() {
 
@@ -454,6 +453,13 @@ public class DeviceControlActivity extends Activity {
                     nextbutton.setText("Send Notification");
                     studyIsStarted = true;
                     writeToLog("study_started for: " + participant_group);
+
+                    // generate random intensity sequence
+                    int[] intensitySequence = new int[] {1,2,3};
+                    shuffleArray(intensitySequence);
+                    writeToLog("generated new feedback intensity sequence: " + intensitySequence);
+
+
                     return;
                 }
 
