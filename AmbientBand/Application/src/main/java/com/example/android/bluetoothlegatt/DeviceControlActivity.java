@@ -600,13 +600,13 @@ public class DeviceControlActivity extends Activity {
         if (modalityIndex < notification_modalities.length()) {
             switch (notification_modalities.charAt(modalityIndex)) {
                 case 'V':
-                    tactileModality();
+                    tactileModality(1);
                     break;
                 case 'S':
-                    audioModality();
+                    audibleModality(1);
                     break;
                 case 'L':
-                    visualModality();
+                    visualModality(1);
                     break;
 
             }
@@ -618,7 +618,11 @@ public class DeviceControlActivity extends Activity {
         log.append("\n" + text);
     }
 
-    private void visualModality() {
+    /*
+     * Used in the user study to notify the climber
+     * using a visual cue.
+     */
+    private void visualModality(int intensity) {
         writeToLog("sent visual cue");
 
         sendBlink("0111",3000,255);
@@ -627,7 +631,11 @@ public class DeviceControlActivity extends Activity {
 
     }
 
-    private void tactileModality() {
+    /*
+     * Used in the user study to notify the climber
+     * using a tactile cue.
+     */
+    private void tactileModality(int intensity) {
         writeToLog("sent tactile cue");
         sendBlink("1000", 1000, 255);
         Toast.makeText(getBaseContext(), "Sent TACTILE cue.",
@@ -635,8 +643,11 @@ public class DeviceControlActivity extends Activity {
 
     }
 
-
-    private void audioModality() {
+    /*
+      * Used in the user study to notify the climber
+      * using a audible cue.
+      */
+    private void audibleModality(int intensity) {
         writeToLog("sent audible cue");
         Toast.makeText(getBaseContext(), "Sent AUDITIVE cue.",
                 Toast.LENGTH_LONG).show();
