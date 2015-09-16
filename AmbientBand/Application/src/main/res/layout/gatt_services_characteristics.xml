@@ -124,7 +124,7 @@
                 android:id="@+id/timelog"
                 android:layout_weight="1.59"
                 android:elegantTextHeight="false"
-                android:lines="10"
+                android:lines="15"
                 android:background="#d8d8d8"
                 android:nestedScrollingEnabled="true" />
 

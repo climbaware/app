@@ -17,11 +17,16 @@
 package com.example.android.bluetoothlegatt;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -75,6 +80,8 @@ public class DeviceControlActivity extends Activity {
     private int modalityIndex = 0;
     private int[] intensitySequence;
     private Random rnd;
+    FragmentManager fragmentManager;
+
 
     private EditText log;
 
@@ -84,6 +91,28 @@ public class DeviceControlActivity extends Activity {
 
     public static String AMBIENT_BAND_UUID_SERVICE = "00002220-0000-1000-8000-00805f9b34fb";
     public static String AMBIENT_BAND_UUID_CHAR = "00002222-0000-1000-8000-00805f9b34fb";
+
+
+
+    /*
+     * Climber Response Dialog
+     */
+    public class ClimberResponseDialog extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("What did the climber respond?")
+                    .setItems(new String[] {"a", "b", "c"}, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            // The 'which' argument contains the index position
+                            // of the selected item
+                        }
+                    });
+            return builder.create();
+        }
+
+    }
 
     // Implementing Fisher–Yates shuffle
     private void shuffleArray(int[] ar)
@@ -387,7 +416,6 @@ public class DeviceControlActivity extends Activity {
         spinner.setAdapter(adapter);
         log = (EditText) findViewById(R.id.timelog);
 
-
         mGroupSpinner = (Spinner) findViewById(R.id.participant_group);
 
 
@@ -432,14 +460,7 @@ public class DeviceControlActivity extends Activity {
                     noResponseButton.setEnabled(false);
                     studyIsStarted = false;
                     writeToLog("sudy finished");
-
-                    // share the study results
-                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                    shareIntent.setType("text/plain");
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, log.getText());
-                    shareIntent.putExtra(Intent.EXTRA_SUBJECT, "ClimbAware Study Results");
-                    startActivity(shareIntent);
-
+                    shareStudyResults();
                 }
 
                 writeToLog("no_response");
@@ -483,6 +504,9 @@ public class DeviceControlActivity extends Activity {
                     noResponseButton.setEnabled(true);
 
 
+                    DialogFragment fragment = new ClimberResponseDialog();
+                    fragment.sh
+
                     sendNextFeedBack(participant_group);
 
 
@@ -502,7 +526,7 @@ public class DeviceControlActivity extends Activity {
                         noResponseButton.setEnabled(false);
                         studyIsStarted = false;
                         writeToLog("sudy finihsed");
-
+                        shareStudyResults();
                     }
 
                     Toast.makeText(getBaseContext(), time,
@@ -630,6 +654,15 @@ public class DeviceControlActivity extends Activity {
 
     private void writeToLog(String text) {
         log.append("\n" + text);
+    }
+
+    // share the study results
+    private void shareStudyResults() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, log.getText());
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "ClimbAware Study Results");
+        startActivity(shareIntent);
     }
 
     /*
