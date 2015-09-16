@@ -1,6 +1,6 @@
-AmbientBand/.gradle
-AmbientBand/local.properties
-AmbientBand/.idea/workspace.xml
-AmbientBand/.idea/libraries
+.gradle
+local.properties
+.idea/workspace.xml
+.idea/libraries
 .DS_Store
-AmbientBand/build
+build
