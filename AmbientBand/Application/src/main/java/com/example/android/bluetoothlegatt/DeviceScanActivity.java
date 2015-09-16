@@ -50,6 +50,7 @@ public class DeviceScanActivity extends ListActivity {
     private static final int REQUEST_ENABLE_BT = 1;
     // Stops scanning after 10 seconds.
     private static final long SCAN_PERIOD = 10000;
+    private SoundPoolPlayer sound;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,10 @@ public class DeviceScanActivity extends ListActivity {
             finish();
             return;
         }
+
+
+
+
     }
 
     @Override

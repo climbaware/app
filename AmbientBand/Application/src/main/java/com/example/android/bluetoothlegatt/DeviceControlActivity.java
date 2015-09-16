@@ -91,6 +91,7 @@ public class DeviceControlActivity extends Activity {
 
     public static String AMBIENT_BAND_UUID_SERVICE = "00002220-0000-1000-8000-00805f9b34fb";
     public static String AMBIENT_BAND_UUID_CHAR = "00002222-0000-1000-8000-00805f9b34fb";
+    private SoundPoolPlayer sound;
 
 
 
@@ -419,6 +420,10 @@ public class DeviceControlActivity extends Activity {
         mGroupSpinner = (Spinner) findViewById(R.id.participant_group);
 
 
+
+        // initialize the sound player
+        sound = new SoundPoolPlayer(this);
+
         /*
           Study Control
          */
@@ -552,8 +557,6 @@ public class DeviceControlActivity extends Activity {
                 writeToLog("reset initiated by study coordinator");
                 studyIsStarted = false;
 
-
-
             }
         });
 
@@ -590,6 +593,28 @@ public class DeviceControlActivity extends Activity {
         button_vibrate_long.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 sendBlink("1000", 1000, 255);
+            }
+        });
+
+
+        final Button button_sound_1 = (Button) findViewById(R.id.bt_sound_1);
+        button_sound_1.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                sound.playShortResource(R.raw.one);
+            }
+        });
+
+        final Button button_sound_2 = (Button) findViewById(R.id.bt_sound_2);
+        button_sound_2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                sound.playShortResource(R.raw.two);
+            }
+        });
+
+        final Button button_sound_3 = (Button) findViewById(R.id.bt_sound_3);
+        button_sound_3.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                sound.playShortResource(R.raw.three);
             }
         });
 
@@ -696,6 +721,23 @@ public class DeviceControlActivity extends Activity {
       */
     private void audibleModality(int intensity) {
         writeToLog("sent audible cue, intensity " + intensity);
+        switch (intensity){
+            case 1:
+                sound.playShortResource(R.raw.one);
+                break;
+            case 2:
+                sound.playShortResource(R.raw.two);
+                break;
+            case 3:
+                sound.playShortResource(R.raw.three);
+                break;
+
+            default:
+                break;
+        }
+
+
+        
         Toast.makeText(getBaseContext(), "Sent AUDITIVE cue.",
                 Toast.LENGTH_LONG).show();
     }
