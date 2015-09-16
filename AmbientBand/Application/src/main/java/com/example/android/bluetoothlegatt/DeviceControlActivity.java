@@ -74,6 +74,7 @@ public class DeviceControlActivity extends Activity {
     private boolean studyIsStarted = false;
     private int modalityIndex = 0;
     private int[] intensitySequence;
+    private Random rnd;
 
     private EditText log;
 
@@ -85,9 +86,9 @@ public class DeviceControlActivity extends Activity {
     public static String AMBIENT_BAND_UUID_CHAR = "00002222-0000-1000-8000-00805f9b34fb";
 
     // Implementing Fisher–Yates shuffle
-    static void shuffleArray(int[] ar)
+    private void shuffleArray(int[] ar)
     {
-        Random rnd = new Random();
+
         for (int i = ar.length - 1; i > 0; i--)
         {
             int index = rnd.nextInt(i + 1);
@@ -397,7 +398,7 @@ public class DeviceControlActivity extends Activity {
         final Button nextbutton = (Button) findViewById(R.id.study_next);
         final Button noResponseButton = (Button) findViewById(R.id.study_no_response);
         noResponseButton.setEnabled(false);
-
+        rnd = new Random();
 
         mGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -432,6 +433,12 @@ public class DeviceControlActivity extends Activity {
                     studyIsStarted = false;
                     writeToLog("sudy finished");
 
+                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                    shareIntent.setType("text/plain");
+                    shareIntent.putExtra(Intent.EXTRA_TEXT,log.getText());
+                    shareIntent.putExtra(Intent.EXTRA_SUBJECT, "ClimbAware Study Results");
+                    startActivity(Intent.createChooser(shareIntent, "Share..."));
+
                 }
 
                 writeToLog("no_response");
@@ -458,7 +465,7 @@ public class DeviceControlActivity extends Activity {
                     // generate random intensity sequence
                     intensitySequence = new int[] {1,2,3};
                     shuffleArray(intensitySequence);
-                    writeToLog("generated new feedback intensity sequence: " + intensitySequence.toString());
+                    writeToLog("generated new feedback intensity sequence: " + intensitySequence[0] + "," + intensitySequence[1] + "," + intensitySequence[2]);
 
                     return;
                 }
