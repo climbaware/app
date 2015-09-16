@@ -70,9 +70,10 @@ public class DeviceControlActivity extends Activity {
     private BluetoothGattCharacteristic mNotifyCharacteristic;
 
     private Spinner mGroupSpinner;
-    protected boolean timerIsRunning = false;
-    protected boolean studyIsStarted = false;
-    protected int modalityIndex = 0;
+    private boolean timerIsRunning = false;
+    private boolean studyIsStarted = false;
+    private int modalityIndex = 0;
+    private int[] intensitySequence;
 
     private EditText log;
 
@@ -455,7 +456,7 @@ public class DeviceControlActivity extends Activity {
                     writeToLog("study_started for: " + participant_group);
 
                     // generate random intensity sequence
-                    int[] intensitySequence = new int[] {1,2,3};
+                    intensitySequence = new int[] {1,2,3};
                     shuffleArray(intensitySequence);
                     writeToLog("generated new feedback intensity sequence: " + intensitySequence);
 
@@ -606,13 +607,13 @@ public class DeviceControlActivity extends Activity {
         if (modalityIndex < notification_modalities.length()) {
             switch (notification_modalities.charAt(modalityIndex)) {
                 case 'V':
-                    tactileModality(1);
+                    tactileModality(intensitySequence[modalityIndex]);
                     break;
                 case 'S':
-                    audibleModality(1);
+                    audibleModality(intensitySequence[modalityIndex]);
                     break;
                 case 'L':
-                    visualModality(1);
+                    visualModality(intensitySequence[modalityIndex]);
                     break;
 
             }
@@ -642,7 +643,7 @@ public class DeviceControlActivity extends Activity {
      * using a tactile cue.
      */
     private void tactileModality(int intensity) {
-        writeToLog("sent tactile cue");
+        writeToLog("sent tactile cue, intensity" + intensity);
         sendBlink("1000", 1000, 255);
         Toast.makeText(getBaseContext(), "Sent TACTILE cue.",
                 Toast.LENGTH_LONG).show();
@@ -654,7 +655,7 @@ public class DeviceControlActivity extends Activity {
       * using a audible cue.
       */
     private void audibleModality(int intensity) {
-        writeToLog("sent audible cue");
+        writeToLog("sent audible cue, intensity" + intensity);
         Toast.makeText(getBaseContext(), "Sent AUDITIVE cue.",
                 Toast.LENGTH_LONG).show();
     }
