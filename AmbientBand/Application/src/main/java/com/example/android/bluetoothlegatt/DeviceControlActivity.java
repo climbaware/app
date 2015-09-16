@@ -433,11 +433,12 @@ public class DeviceControlActivity extends Activity {
                     studyIsStarted = false;
                     writeToLog("sudy finished");
 
+                    // share the study results
                     Intent shareIntent = new Intent(Intent.ACTION_SEND);
                     shareIntent.setType("text/plain");
-                    shareIntent.putExtra(Intent.EXTRA_TEXT,log.getText());
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, log.getText());
                     shareIntent.putExtra(Intent.EXTRA_SUBJECT, "ClimbAware Study Results");
-                    startActivity(Intent.createChooser(shareIntent, "Share..."));
+                    startActivity(shareIntent);
 
                 }
 
