@@ -48,6 +48,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,6 +68,7 @@ public class DeviceControlActivity extends Activity {
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
 
+    private LogFile mLogFile;
     private TextView mConnectionState;
     private String mDeviceName;
     private String mDeviceAddress;
@@ -79,7 +81,10 @@ public class DeviceControlActivity extends Activity {
     private Spinner mGroupSpinner;
     private boolean timerIsRunning = false;
     private boolean studyIsStarted = false;
+    private int sentCueIndex = 0;
     private int modalityIndex = 0;
+
+
     private int[] intensitySequence;
     private Random rnd;
     FragmentManager fragmentManager;
@@ -95,7 +100,7 @@ public class DeviceControlActivity extends Activity {
     public static String AMBIENT_BAND_UUID_CHAR = "00002222-0000-1000-8000-00805f9b34fb";
     private SoundPoolPlayer sound;
 
-    static String[] CLIMBERANSWERS = new String[] {"tactile intensity 1", "tactile intensity 2", "tactile intensity 3", "visible intensity 1", "visible intensity 2", "visible intensity 3", "audible intensity 1", "audible intensity 2", "audible intensity 3"};
+    static String[] CLIMBERANSWERS = new String[] {"1", "2", "3"};
 
     void showDialog() {
         // DialogFragment.show() will take care of adding the fragment
@@ -437,6 +442,8 @@ public class DeviceControlActivity extends Activity {
         spinner.setAdapter(adapter);
         log = (EditText) findViewById(R.id.timelog);
 
+        log.setFocusable(false);
+
         mGroupSpinner = (Spinner) findViewById(R.id.participant_group);
 
 
@@ -457,7 +464,6 @@ public class DeviceControlActivity extends Activity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mChronometer.reset();
-                modalityIndex = 0;
                 nextbutton.setText("Start Study");
                 nextbutton.setEnabled(true);
                 log.setText("");
@@ -480,18 +486,38 @@ public class DeviceControlActivity extends Activity {
 
                 nextbutton.setText("Send Notification");
 
-                if(modalityIndex == 3) {
-                    nextbutton.setEnabled(false);
+                if(sentCueIndex == 3) {
+                    writeToLog("route finished");
+                }
+
+                if(sentCueIndex == 6) {
+                    nextbutton.setText("Next Modality");
+                    nextbutton.setEnabled(true);
                     noResponseButton.setEnabled(false);
                     studyIsStarted = false;
-                    writeToLog("sudy finished");
+                    writeToLog("modality finished");
+                    sentCueIndex = 0;
+
                     //shareStudyResults();
                 }
+
+                sentCueIndex++;
 
                 writeToLog("no_response");
 
 
             }
+
+
+
+
+
+            //LogFile file = LogFile.getInstance(getApplicationContext());
+
+
+
+
+
 
         });
 
@@ -538,22 +564,36 @@ public class DeviceControlActivity extends Activity {
                     mChronometer.reset();
 
                     // show climber response dialog
-                    showDialog();
 
                     nextbutton.setText("Send Notification");
 
                     writeToLog(time);
+                    showDialog();
 
-                    if (modalityIndex == 3) {
-                        nextbutton.setEnabled(false);
+                    if (sentCueIndex == 3) {
+                        writeToLog("route finished");
+                    }
+
+                    if (sentCueIndex == 6) {
+                        nextbutton.setText("Next Modality");
+                        nextbutton.setEnabled(true);
                         noResponseButton.setEnabled(false);
                         studyIsStarted = false;
-                        writeToLog("sudy finihsed");
+                        writeToLog("modality finihsed");
                         //shareStudyResults();
+                        sentCueIndex = 0;
+                        modalityIndex++;
+
+                    } else {
+
                     }
+
+                    sentCueIndex++;
+
 
                     Toast.makeText(getBaseContext(), time,
                             Toast.LENGTH_LONG).show();
+
 
                 }
 
@@ -567,6 +607,7 @@ public class DeviceControlActivity extends Activity {
                 mChronometer.reset();
 
                 modalityIndex = 0;
+                sentCueIndex = 0;
                 nextbutton.setText("Start Study");
 
                 nextbutton.setEnabled(true);
@@ -689,18 +730,20 @@ public class DeviceControlActivity extends Activity {
                 case 'L':
                     visualModality(intensitySequence[modalityIndex]);
                     break;
-
             }
-            modalityIndex++;
+            sentCueIndex++;
         }
     }
 
     private void writeToLog(String text) {
+
+
+
         log.append("\n" + text);
     }
 
     // share the study results
-    private void shareStudyResults() {
+    public void shareStudyResults(View v) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, log.getText());
