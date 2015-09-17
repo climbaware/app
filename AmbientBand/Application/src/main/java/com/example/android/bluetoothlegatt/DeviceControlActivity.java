@@ -47,11 +47,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.nio.ByteBuffer;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 import java.util.Random;
 
 /**
@@ -86,23 +87,25 @@ public class DeviceControlActivity extends Activity {
     private LogFile mLogFile;
     private Spinner mParticipantGroupSpinner;
     private boolean timerIsRunning = false;
-    private boolean studyIsStarted = false;
+    private boolean isClimbing = false;
     private int sentCueIndex = 0;
     private int modalityIndex = 0;
     private int routeIndex = 0;
     private int[] intensitySequence;
     private Random rnd;
     private EditText log;
-    static String[] CLIMBERANSWERS = new String[] {"LOW 1", "MEDIUM 2", "HIGH 3"};
+    static String[] CLIMBERANSWERS = new String[]{"LOW 1", "MEDIUM 2", "HIGH 3"};
     private Button noResponseButton;
     private Chronometer mChronometer;
     private Button nextbutton;
     private static final int CUES_PER_MODALITY = 3;
+    private Button reachedTop;
+    String participant_group;
 
 
     /**
      * Show Climber Response Dialog
-     *
+     * <p/>
      * shows dialog to enter the climbers response about the
      * perceived intensity of the visual/tactile/audible cue
      */
@@ -130,7 +133,7 @@ public class DeviceControlActivity extends Activity {
                     .setItems(CLIMBERANSWERS, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int i) {
 
-                            writeToLog(CLIMBERANSWERS[i]);
+                            writeToLog("climber_response", CLIMBERANSWERS[i]);
 
                             // The 'which' argument contains the index position
                             // of the selected item
@@ -143,16 +146,15 @@ public class DeviceControlActivity extends Activity {
 
     /**
      * Random Array Shuffle
-     *
+     * <p/>
      * Implementing Fisher–Yates shuffle
      * for randomly shffling an array
+     *
      * @param ar array to be shuffeld
      */
-    private void shuffleArray(int[] ar)
-    {
+    private void shuffleArray(int[] ar) {
 
-        for (int i = ar.length - 1; i > 0; i--)
-        {
+        for (int i = ar.length - 1; i > 0; i--) {
             int index = rnd.nextInt(i + 1);
             // Simple swap
             int a = ar[index];
@@ -210,9 +212,6 @@ public class DeviceControlActivity extends Activity {
     };
 
 
-
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -233,7 +232,6 @@ public class DeviceControlActivity extends Activity {
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
 
-
         // participant group dropdown select
         Spinner spinner = (Spinner) findViewById(R.id.participant_group);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -244,7 +242,7 @@ public class DeviceControlActivity extends Activity {
         log.setFocusable(false);
 
         mParticipantGroupSpinner = (Spinner) findViewById(R.id.participant_group);
-
+        participant_group = (String) mParticipantGroupSpinner.getSelectedItem();
 
 
         // initialize the sound player
@@ -257,6 +255,8 @@ public class DeviceControlActivity extends Activity {
         nextbutton = (Button) findViewById(R.id.study_next);
         noResponseButton = (Button) findViewById(R.id.study_no_response);
         noResponseButton.setEnabled(false);
+        reachedTop = (Button) findViewById(R.id.reached_top);
+        reachedTop.setEnabled(false);
         rnd = new Random();
 
         /*
@@ -269,8 +269,8 @@ public class DeviceControlActivity extends Activity {
                 nextbutton.setText("Start Study");
                 nextbutton.setEnabled(true);
                 //log.setText("");
-                writeToLog("changed group");
-                studyIsStarted = false;
+                //writeToLog("changed_group", (String) mParticipantGroupSpinner.getSelectedItem());
+                isClimbing = false;
 
             }
 
@@ -290,6 +290,40 @@ public class DeviceControlActivity extends Activity {
                 executeNextStudyAction(false);
             }
         });
+
+        /**
+         * Button Reached top
+         *
+         * mark the end of the climb
+         */
+        reachedTop.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                reachedTop.setEnabled(false);
+
+                nextbutton.setEnabled(true);
+                noResponseButton.setEnabled(true);
+
+
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(DeviceControlActivity.this);
+                String grade = "HARD";
+                if(participant_group.split("-")[1].charAt(routeIndex) == 'E') {
+                    grade = "EASY";
+                }
+                writeToLog("reached_top");
+
+                alert.setTitle("Route is finished. Go to the " + grade + " route now.");
+
+
+                nextbutton.setText("Start Climbing");
+                isClimbing = false;
+
+                alert.show();
+            }
+        });
+
+
 
         /*
          *  NEXT Button (States: Start Study/Send Notification/Climber Responded)
@@ -324,8 +358,8 @@ public class DeviceControlActivity extends Activity {
                 nextbutton.setEnabled(true);
                 log.setText("");
 
-                writeToLog("reset initiated by study coordinator");
-                studyIsStarted = false;
+                writeToLog("reset");
+                isClimbing = false;
 
                 mLogFile.createFreshLogFile();
 
@@ -386,7 +420,6 @@ public class DeviceControlActivity extends Activity {
         });
 
 
-
         final Button button_on_short = (Button) findViewById(R.id.bt_on_short);
         button_on_short.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -432,24 +465,24 @@ public class DeviceControlActivity extends Activity {
     }
 
 
-
-
     private void executeNextStudyAction(boolean climberHasResponded) {
 
-        String participant_group = (String) mParticipantGroupSpinner.getSelectedItem();
+        participant_group = (String) mParticipantGroupSpinner.getSelectedItem();
 
         // STATE 1: Initial Button State: Start Study
-        if (!studyIsStarted) {
-            studyIsStarted = true;
+        if (!isClimbing) {
+            isClimbing = true;
 
             // was "Start Study Before"
             nextbutton.setText("Send Notification");
-            writeToLog("study_started for: " + participant_group);
+            writeToLog("started_climbing", participant_group);
+            writeToLog("grade", participant_group.split("-")[1].charAt(routeIndex));
+
 
             // generate random intensity sequence
             intensitySequence = new int[]{1, 2, 3};
             shuffleArray(intensitySequence);
-            writeToLog("generated intensity sequence: " + intensitySequence[0] + "," + intensitySequence[1] + "," + intensitySequence[2]);
+            writeToLog("generated_sequence: ", intensitySequence[0] + "," + intensitySequence[1] + "," + intensitySequence[2]);
             return;
         }
 
@@ -463,18 +496,19 @@ public class DeviceControlActivity extends Activity {
             sendModalityCue(participant_group);
 
 
-        // STATE 3: Initial Button State: Climber responded
+            // STATE 3: Initial Button State: Climber responded
         } else { // timer was running, climber reacted to feedback
             mChronometer.stop();
             String time = mChronometer.getText().toString();
             timerIsRunning = false;
             mChronometer.reset();
-            writeToLog(time);
-            if(climberHasResponded) {
+            writeToLog("response_time", time);
+
+            if (climberHasResponded) {
                 // show climber response dialog
                 showDialog();
             } else {
-                writeToLog("no response");
+                writeToLog("no_response");
             }
 
             /*
@@ -483,21 +517,26 @@ public class DeviceControlActivity extends Activity {
             nextbutton.setText("Send Notification");
 
             // next state --> STATE 2: sent notification of less than 3 were send before
-            if (sentCueIndex == CUES_PER_MODALITY-1) {
-                writeToLog("route finished");
-                nextbutton.setText("Send Notification");
+            if (sentCueIndex == CUES_PER_MODALITY - 1) {
+                writeToLog("route_finished");
+                reachedTop.setEnabled(true);
+                nextbutton.setEnabled(false);
+                noResponseButton.setEnabled(false);
+
                 sentCueIndex = 0;
 
-                if(routeIndex == 1) { // there exists two routes (easy and hard)
+
+                if (routeIndex == 1) { // there exists two routes (easy and hard)
                     nextbutton.setText("Next Modality");
                     nextbutton.setEnabled(true);
                     noResponseButton.setEnabled(false);
-                    studyIsStarted = false;
+                    isClimbing = false;
                     routeIndex = 0;
-                    writeToLog("modality finihsed");
+                    writeToLog("modality_finished");
                     //shareStudyResults();
-                    if(modalityIndex == 2) {
-                        nextbutton.setText("Done!");
+                    if (modalityIndex == 2) {
+                        nextbutton.setText("Participant Finished");
+                        writeToLog("participant_finished");
                         nextbutton.setEnabled(false);
                         noResponseButton.setEnabled(false);
 
@@ -512,7 +551,6 @@ public class DeviceControlActivity extends Activity {
             }
 
 
-
             Toast.makeText(getBaseContext(), time,
                     Toast.LENGTH_SHORT).show();
 
@@ -522,14 +560,47 @@ public class DeviceControlActivity extends Activity {
 
     }
 
-    private void writeToLog(String text) {
+    private void writeToLog(String event) {
+        writeToLog(event, "", "");
+    }
+
+    private void writeToLog(String event, int data) {
+        writeToLog(event, Integer.toString(data));
+    }
+
+    private void writeToLog(String event, int data, String text) {
+        writeToLog(event, Integer.toString(data), text);
+    }
+
+    private void writeToLog(String event, String data) {
+        writeToLog(event, data, "");
+    }
+
+        private void writeToLog(String event, String data, String text) {
         Long tsLong = System.currentTimeMillis()/1000;
         String ts = tsLong.toString();
 
-        String v = ts + "   " + text;
-        log.append("\n" + v);
+        String v = event;
+            if(!data.isEmpty())
+                v += " (" + data + ")";
 
-        mLogFile.log(v);
+            log.append("\n" + v);
+
+
+        try {
+            JSONObject json = new JSONObject();
+            json.put("timestamp", ts);
+            json.put("event", event);
+            json.put("description", text);
+            json.put("data", data);
+
+            mLogFile.log(json.toString());
+
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 
     // share the study results
@@ -546,7 +617,8 @@ public class DeviceControlActivity extends Activity {
      * using a visual cue.
      */
     private void visualModality(int intensity) {
-        writeToLog("sent visual cue, intensity " + intensity);
+
+        writeToLog("visual_cue",intensity,"sent visual cue, intensity " + intensity);
 
         mArmbandController.sendString("L" + Integer.toString(intensity));
 
@@ -560,7 +632,7 @@ public class DeviceControlActivity extends Activity {
      * using a tactile cue.
      */
     private void tactileModality(int intensity) {
-        writeToLog("sent tactile cue, intensity " + intensity);
+        writeToLog("tactile_cue", intensity, "sent tactile cue, intensity " + intensity);
         mArmbandController.sendString("V" + Integer.toString(intensity));
 
         Toast.makeText(getBaseContext(), "Sent TACTILE cue.",
@@ -573,7 +645,7 @@ public class DeviceControlActivity extends Activity {
       * using a audible cue.
       */
     private void audibleModality(int intensity) {
-        writeToLog("sent audible cue, intensity " + intensity);
+        writeToLog("audible_cue", intensity, "sent tactile cue, intensity " + intensity);
         switch (intensity){
             case 1:
                 sound.playShortResource(R.raw.one);
