@@ -37,6 +37,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -220,7 +221,7 @@ public class DeviceControlActivity extends Activity {
         final Intent intent = getIntent();
         mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
         mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
-
+        mLogFile = LogFile.getInstance(this);
 
         // Sets up UI references.
         ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress);
@@ -309,8 +310,9 @@ public class DeviceControlActivity extends Activity {
          * resets the current user study state to the beginning
          * returns to first modality and first cue
          */
-        findViewById(R.id.study_reset).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        findViewById(R.id.study_reset).setOnLongClickListener(new OnLongClickListener() {
+
+            public boolean onLongClick(View v) {
                 mChronometer.reset();
 
                 modalityIndex = 0;
@@ -323,10 +325,14 @@ public class DeviceControlActivity extends Activity {
 
                 writeToLog("reset initiated by study coordinator");
                 studyIsStarted = false;
+                return true;
 
             }
+
         });
-        
+
+
+
         /*
             Direct Device Control
          */
@@ -490,6 +496,8 @@ public class DeviceControlActivity extends Activity {
                         nextbutton.setText("Done!");
                         nextbutton.setEnabled(false);
                         noResponseButton.setEnabled(false);
+
+                        mLogFile.createFreshLogFile();
                     } else {
                         modalityIndex++;
                     }
@@ -512,10 +520,9 @@ public class DeviceControlActivity extends Activity {
     }
 
     private void writeToLog(String text) {
-
-
-
         log.append("\n" + text);
+
+        mLogFile.log("\n" + text);
     }
 
     // share the study results

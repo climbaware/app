@@ -16,18 +16,21 @@
 
 package com.example.android.bluetoothlegatt;
 
-import java.io.BufferedOutputStream;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.StatFs;
+import android.text.Spanned;
+import android.text.SpannedString;
+
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,27 +40,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Observable;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Build;
-import android.os.Environment;
-import android.os.StatFs;
-import android.provider.Settings.Secure;
-import android.text.Spanned;
-import android.text.SpannedString;
-import android.util.Log;
-import android.widget.Toast;
-import android.os.Handler;
 
 
 /**
@@ -88,11 +70,12 @@ public class LogFile extends Observable {
     private int mFileNumber;
     private String mFileName;
     
-    private static String mSuffix = "";
+    private static String mSuffix = ".txt";
 
     // Store an sLogFileInstance of the log file
     private static LogFile sLogFileInstance = null;
 
+    private int mLogFileNumber = 0;
     
     /**
      * Singleton that ensures that only one sLogFileInstance of the LogFile exists at any time
@@ -104,22 +87,29 @@ public class LogFile extends Observable {
         // Get the context from the caller
         mContext = context;
 
+
         // Create a timestamp
         String dateString = new SimpleDateFormat("dd_MM_yyyy", Locale.US).format(new Date());
 
         // Create the file name by sprintf'ing its parts into the filename string.
 
-        mFileName = "climbaware"+ dateString.toString();
+        mFileName = "climbaware-"+ dateString.toString() + "-" + mLogFileNumber;
 
 
-        // Commit the updates
+        // Commit the updates2
 
         // Create the log file
         mLogFile = createLogFile(mFileName + mSuffix);
 
 
     }
-    
+    public void createFreshLogFile() {
+        mLogFileNumber++;
+        String dateString = new SimpleDateFormat("dd_MM_yyyy", Locale.US).format(new Date());
+        mFileName = "climbaware-"+ dateString.toString() + "-" + mLogFileNumber;
+        mLogFile = createLogFile(mFileName + mSuffix);
+    }
+
     public static LogFile getInstance(Context context, String suffix) {
     	mSuffix = suffix;
     	return getInstance(context);
@@ -221,7 +211,7 @@ public class LogFile extends Observable {
     	FilenameFilter filter = new FilenameFilter(){
 			@Override
 			public boolean accept(File dir, String filename) {
-				if(filename.endsWith(".log"))
+				if(filename.endsWith(".txt"))
 					return true;
 				else 
 					return false;
@@ -317,7 +307,7 @@ public class LogFile extends Observable {
     private File getDestinationDirectory() {
     	File dir = mContext.getFilesDir();
     	if(isExternalStorageReadable() && isExternalStorageWritable()) {
-    		dir = Environment.getExternalStoragePublicDirectory("SpatialFamiliarity");
+    		dir = Environment.getExternalStoragePublicDirectory(mContext.getString(R.string.logfile_foldername));
     		dir.mkdir();
     		dir.setReadable(true);
     		dir.setWritable(true);
