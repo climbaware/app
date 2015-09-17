@@ -21,7 +21,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
@@ -42,13 +41,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,7 +65,6 @@ public class DeviceControlActivity extends Activity {
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
 
-    private LogFile mLogFile;
     private TextView mConnectionState;
     private String mDeviceName;
     private String mDeviceAddress;
@@ -76,30 +72,32 @@ public class DeviceControlActivity extends Activity {
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private boolean mConnected = false;
-    private BluetoothGattCharacteristic mNotifyCharacteristic;
 
-    private Spinner mGroupSpinner;
+    private final String LIST_NAME = "NAME";
+    private final String LIST_UUID = "UUID";
+
+
+    private SoundPoolPlayer sound;
+    private ArmbandController mArmbandController;
+
+
+    /* Study */
+    private LogFile mLogFile;
+    private Spinner mParticipantGroupSpinner;
     private boolean timerIsRunning = false;
     private boolean studyIsStarted = false;
     private int sentCueIndex = 0;
     private int modalityIndex = 0;
-
-
     private int[] intensitySequence;
     private Random rnd;
-    FragmentManager fragmentManager;
-
     private EditText log;
-    private final String LIST_NAME = "NAME";
-    private final String LIST_UUID = "UUID";
-
-    public static String AMBIENT_BAND_UUID_SERVICE = "00002220-0000-1000-8000-00805f9b34fb";
-    public static String AMBIENT_BAND_UUID_CHAR = "00002222-0000-1000-8000-00805f9b34fb";
-    private SoundPoolPlayer sound;
-
     static String[] CLIMBERANSWERS = new String[] {"1", "2", "3"};
 
+
+
     /**
+     * Show Climber Response Dialog
+     *
      * shows dialog to enter the climbers response about the
      * perceived intensity of the visual/tactile/audible cue
      */
@@ -119,11 +117,11 @@ public class DeviceControlActivity extends Activity {
     /*
      * Climber Response Dialog
      */
-    static public class ClimberResponseDialog extends DialogFragment {
+    private class ClimberResponseDialog extends DialogFragment {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("What did the climber respond?")
+            builder.setTitle(R.string.climber_response_question)
                     .setItems(CLIMBERANSWERS, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int i) {
 
@@ -139,6 +137,8 @@ public class DeviceControlActivity extends Activity {
     }
 
     /**
+     * Random Array Shuffle
+     *
      * Implementing Fisher–Yates shuffle
      * for randomly shffling an array
      * @param ar array to be shuffeld
@@ -156,90 +156,6 @@ public class DeviceControlActivity extends Activity {
         }
     }
 
-    public void sendNotification(View v) {
-
-        BluetoothGattService ambientBandService = mBluetoothLeService.getService(UUID.fromString(AMBIENT_BAND_UUID_SERVICE));
-        if (ambientBandService == null) {
-            System.out.println("service null"); return;
-        }
-        BluetoothGattCharacteristic ambiendBandCharacteristic = ambientBandService.getCharacteristic(UUID.fromString(AMBIENT_BAND_UUID_CHAR));
-        if (ambiendBandCharacteristic == null) {
-            System.out.println("characteristic null"); return;
-        }
-        //ambiendBandCharacteristic.setValue(new byte[] {0x00,0x00,0x00,0x01, 0x02, 0x0B , (byte) 0xB8, (byte) (byte) 0xff, (byte) (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xfe});
-        ambiendBandCharacteristic.setValue(fullOnOffString("110",1000,255));
-        boolean status = mBluetoothLeService.writeCharacteristic(ambiendBandCharacteristic);
-        System.out.println("Write Status: " + status);
-
-        System.out.println(getOnOffString("010", 1000,255));
-    }
-
-
-    public static byte[] hexStringToByteArray(String s) {
-        int len = s.length();
-        byte[] data = new byte[len / 2];
-        for (int i = 0; i < len; i += 2) {
-            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-                    + Character.digit(s.charAt(i+1), 16));
-        }
-        return data;
-    }
-
-    public byte[] getOnOffString(String ids, int duration, int intensity){
-        byte[] result = new byte[4];
-
-        byte b = (byte) Integer.parseInt(ids, 2);
-
-
-        result[0] = b;
-
-
-        ByteBuffer bb = ByteBuffer.allocate(4);
-        bb.putInt(duration);
-        byte[] duration_res = bb.array();
-        result[1] = duration_res[2];
-        result[2] = duration_res[3];
-
-        bb = ByteBuffer.allocate(4);
-        bb.putInt(intensity);
-        byte[] intensity_ar = bb.array();
-        result[3] = intensity_ar[3];
-
-
-
-
-
-        return result;
-    }
-
-    public byte[] fullOnOffString( String ids, int duration, int intensity){
-
-        byte[] onoff = getOnOffString(ids, duration, intensity);
-
-        // build the string
-        byte[] result = new byte[4*3];
-        result[0] = (byte) 0x00;
-        result[1] = (byte) 0x00;
-        result[2] = (byte) 0x00;
-        result[3] = (byte) 0x01;
-
-        result[4] = onoff[0];
-        result[5] = onoff[1];
-        result[6] = onoff[2];
-        result[7] = onoff[3];
-
-        result[8] = (byte) 0xff;
-        result[9] = (byte) 0xff;
-        result[10] = (byte) 0xff;
-        result[11] = (byte) 0xfe;
-
-        return result;
-
-    }
-
-
-
-
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -253,6 +169,8 @@ public class DeviceControlActivity extends Activity {
             }
             // Automatically connects to the device upon successful start-up initialization.
             mBluetoothLeService.connect(mDeviceAddress);
+            mArmbandController = new ArmbandController(mBluetoothLeService);
+
         }
 
         @Override
@@ -279,7 +197,6 @@ public class DeviceControlActivity extends Activity {
                 mConnected = false;
                 updateConnectionState(R.string.disconnected);
                 invalidateOptionsMenu();
-                clearUI();
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Show all the supported services and characteristics on the user interface.
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
@@ -287,157 +204,9 @@ public class DeviceControlActivity extends Activity {
         }
     };
 
-    // If a given GATT characteristic is selected, check for supported features.  This sample
-    // demonstrates 'Read' and 'Notify' features.  See
-    // http://d.android.com/reference/android/bluetooth/BluetoothGatt.html for the complete
-    // list of supported characteristic features.
-    private final ExpandableListView.OnChildClickListener servicesListClickListner =
-            new ExpandableListView.OnChildClickListener() {
-                @Override
-                public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
-                                            int childPosition, long id) {
-                    if (mGattCharacteristics != null) {
-                        final BluetoothGattCharacteristic characteristic =
-                                mGattCharacteristics.get(groupPosition).get(childPosition);
-                        final int charaProp = characteristic.getProperties();
-                        if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
-                            // If there is an active notification on a characteristic, clear
-                            // it first so it doesn't update the data field on the user interface.
-                            if (mNotifyCharacteristic != null) {
-                                mBluetoothLeService.setCharacteristicNotification(
-                                        mNotifyCharacteristic, false);
-                                mNotifyCharacteristic = null;
-                            }
-                            mBluetoothLeService.readCharacteristic(characteristic);
-                        }
-                        if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
-                            mNotifyCharacteristic = characteristic;
-                            mBluetoothLeService.setCharacteristicNotification(
-                                    characteristic, true);
-                        }
-                        return true;
-                    }
-                    return false;
-                }
-    };
-
-    private void clearUI() {
-    }
-
-    private void sendString(String s){
-        byte[] bs = s.getBytes();
-
-        BluetoothGattService ambientBandService = mBluetoothLeService.getService(UUID.fromString(AMBIENT_BAND_UUID_SERVICE));
-        if (ambientBandService == null) {
-            System.out.println("service null"); return;
-        }
-        BluetoothGattCharacteristic ambiendBandCharacteristic = ambientBandService.getCharacteristic(UUID.fromString(AMBIENT_BAND_UUID_CHAR));
-        if (ambiendBandCharacteristic == null) {
-            System.out.println("characteristic null"); return;
-        }
-        //ambiendBandCharacteristic.setValue(new byte[] {0x00,0x00,0x00,0x01, 0x02, 0x0B , (byte) 0xB8, (byte) (byte) 0xff, (byte) (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xfe});
 
 
 
-        ambiendBandCharacteristic.setValue(bs);
-        boolean status = mBluetoothLeService.writeCharacteristic(ambiendBandCharacteristic);
-        System.out.println("Write Status: " + status);
-
-    }
-
-
-    private void sendByteString(byte[] bs){
-        BluetoothGattService ambientBandService = mBluetoothLeService.getService(UUID.fromString(AMBIENT_BAND_UUID_SERVICE));
-        if (ambientBandService == null) {
-            System.out.println("service null"); return;
-        }
-        BluetoothGattCharacteristic ambiendBandCharacteristic = ambientBandService.getCharacteristic(UUID.fromString(AMBIENT_BAND_UUID_CHAR));
-        if (ambiendBandCharacteristic == null) {
-            System.out.println("characteristic null"); return;
-        }
-        //ambiendBandCharacteristic.setValue(new byte[] {0x00,0x00,0x00,0x01, 0x02, 0x0B , (byte) 0xB8, (byte) (byte) 0xff, (byte) (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xfe});
-
-
-
-        ambiendBandCharacteristic.setValue(bs);
-        boolean status = mBluetoothLeService.writeCharacteristic(ambiendBandCharacteristic);
-        System.out.println("Write Status: " + status);
-
-    }
-
-    private void sendBlink(String ids, int duration, int intensity){
-        sendByteString(fullOnOffString(ids, duration, intensity));
-
-    }
-
-
-    public class BlinkSequenceItem{
-        public String getIds() {
-            return ids;
-        }
-
-        public int getDuration() {
-            return duration;
-        }
-
-        public int getIntensity() {
-            return intensity;
-        }
-
-        private final String ids;
-        private final int duration;
-        private final int intensity;
-
-        public BlinkSequenceItem(String ids, int duration, int intensity){
-            this.ids = ids;
-            this.duration = duration;
-            this.intensity = intensity;
-        }
-    }
-
-
-    public void sendBlinkSquence(BlinkSequenceItem[] sequence){
-
-        // build the string
-        byte[] result = new byte[4*2 + 4*sequence.length];
-        result[0] = (byte) 0x00;
-        result[1] = (byte) 0x00;
-        result[2] = (byte) 0x00;
-        result[3] = (byte) 0x01;
-
-        int current_index = 4;
-
-        for(BlinkSequenceItem bsi : sequence){
-            byte[] onoff = getOnOffString(bsi.getIds(), bsi.getDuration(), bsi.getIntensity());
-
-            result[current_index] = onoff[0];
-            current_index++;
-            result[current_index] = onoff[1];
-            current_index++;
-            result[current_index] = onoff[2];
-            current_index++;
-            result[current_index] = onoff[3];
-            current_index++;
-
-        }
-
-
-        result[current_index] = (byte) 0xff;
-        current_index++;
-
-        result[current_index] = (byte) 0xff;
-        current_index++;
-
-        result[current_index] = (byte) 0xff;
-        current_index++;
-
-        result[current_index] = (byte) 0xfe;
-
-
-        sendByteString(result);
-
-
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -448,6 +217,7 @@ public class DeviceControlActivity extends Activity {
         mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
         mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
 
+
         // Sets up UI references.
         ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress);
         mConnectionState = (TextView) findViewById(R.id.connection_state);
@@ -457,6 +227,8 @@ public class DeviceControlActivity extends Activity {
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
+
+
         // participant group dropdown select
         Spinner spinner = (Spinner) findViewById(R.id.participant_group);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -464,10 +236,9 @@ public class DeviceControlActivity extends Activity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         log = (EditText) findViewById(R.id.timelog);
-
         log.setFocusable(false);
 
-        mGroupSpinner = (Spinner) findViewById(R.id.participant_group);
+        mParticipantGroupSpinner = (Spinner) findViewById(R.id.participant_group);
 
 
 
@@ -483,13 +254,16 @@ public class DeviceControlActivity extends Activity {
         noResponseButton.setEnabled(false);
         rnd = new Random();
 
-        mGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        /*
+         * Participant group dropdown select
+         */
+        mParticipantGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mChronometer.reset();
                 nextbutton.setText("Start Study");
                 nextbutton.setEnabled(true);
-                log.setText("");
+                //log.setText("");
                 writeToLog("changed group");
                 studyIsStarted = false;
             }
@@ -500,7 +274,11 @@ public class DeviceControlActivity extends Activity {
             }
         });
 
-        // study_no_response (the climber did not react to the the audo/tactile/light feedback)
+        /**
+         * Button No Response
+         *
+         * study_no_response (the climber did not react to the the audo/tactile/light feedback)
+         */
         noResponseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -508,6 +286,7 @@ public class DeviceControlActivity extends Activity {
                 mChronometer.reset();
 
                 nextbutton.setText("Send Notification");
+
 
                 if(sentCueIndex == 3) {
                     writeToLog("route finished");
@@ -524,42 +303,33 @@ public class DeviceControlActivity extends Activity {
                     //shareStudyResults();
                 }
 
-                sentCueIndex++;
 
+                sentCueIndex++;
                 writeToLog("no_response");
 
 
             }
-
-
-
-
-
-            //LogFile file = LogFile.getInstance(getApplicationContext());
-
-
-
-
-
-
         });
 
-
-
-
-        // next
+        /*
+         *  NEXT Button
+         *
+         * UI behavior for conducting the user study
+         * Button that starts the study and let's the coordinator
+         * send the next visual/tactile/audible cue
+         */
         nextbutton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                String participant_group = (String) mGroupSpinner.getSelectedItem();
+                String participant_group = (String) mParticipantGroupSpinner.getSelectedItem();
 
-                if(!studyIsStarted) {
+                if (!studyIsStarted) {
                     nextbutton.setText("Send Notification");
                     studyIsStarted = true;
                     writeToLog("study_started for: " + participant_group);
 
                     // generate random intensity sequence
-                    intensitySequence = new int[] {1,2,3};
+                    intensitySequence = new int[]{1, 2, 3};
                     shuffleArray(intensitySequence);
                     writeToLog("generated new feedback intensity sequence: " + intensitySequence[0] + "," + intensitySequence[1] + "," + intensitySequence[2]);
 
@@ -567,8 +337,7 @@ public class DeviceControlActivity extends Activity {
                 }
 
 
-
-                if(!timerIsRunning) { // timer was not running, study coordinator sent modality feedback to climber
+                if (!timerIsRunning) { // timer was not running, study coordinator sent modality feedback to climber
 
                     mChronometer.start();
                     timerIsRunning = true;
@@ -577,7 +346,6 @@ public class DeviceControlActivity extends Activity {
                     nextbutton.setText("Climber responded");
                     noResponseButton.setEnabled(true);
                     sendNextFeedBack(participant_group);
-
 
 
                 } else { // timer was running, climber reacted to feedback
@@ -606,16 +374,11 @@ public class DeviceControlActivity extends Activity {
                         //shareStudyResults();
                         sentCueIndex = 0;
                         modalityIndex++;
-
-                    } else {
-
                     }
 
                     sentCueIndex++;
-
-
                     Toast.makeText(getBaseContext(), time,
-                            Toast.LENGTH_LONG).show();
+                            Toast.LENGTH_SHORT).show();
 
 
                 }
@@ -624,7 +387,13 @@ public class DeviceControlActivity extends Activity {
             }
         });
 
-        // reset
+        /*
+         * RESET Button
+         *
+         * UI behavior for conducting the user study
+         * resets the current user study state to the beginning
+         * returns to first modality and first cue
+         */
         findViewById(R.id.study_reset).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mChronometer.reset();
@@ -641,20 +410,9 @@ public class DeviceControlActivity extends Activity {
 
             }
         });
-
-
-
-
-
-
-
-
-
-
-
-
+        
         /*
-            Device Control
+            Direct Device Control
          */
 
         final Button button_vibrate_short = (Button) findViewById(R.id.bt_vibrate_short);
@@ -725,7 +483,6 @@ public class DeviceControlActivity extends Activity {
         });
 
 
-
     }
 
     private void sendNextFeedBack(String participant_group) {
@@ -772,7 +529,7 @@ public class DeviceControlActivity extends Activity {
     private void visualModality(int intensity) {
         writeToLog("sent visual cue, intensity " + intensity);
 
-        sendString("L" + Integer.toString(intensity));
+        mArmbandController.sendString("L" + Integer.toString(intensity));
 
         Toast.makeText(getBaseContext(), "Sent VISUAL cue.",
                 Toast.LENGTH_SHORT).show();
@@ -785,7 +542,7 @@ public class DeviceControlActivity extends Activity {
      */
     private void tactileModality(int intensity) {
         writeToLog("sent tactile cue, intensity " + intensity);
-        sendString("V" + Integer.toString(intensity));
+        mArmbandController.sendString("V" + Integer.toString(intensity));
 
         Toast.makeText(getBaseContext(), "Sent TACTILE cue.",
                 Toast.LENGTH_SHORT).show();
@@ -816,7 +573,7 @@ public class DeviceControlActivity extends Activity {
 
         
         Toast.makeText(getBaseContext(), "Sent AUDITIVE cue.",
-                Toast.LENGTH_LONG).show();
+                Toast.LENGTH_SHORT).show();
     }
 
 

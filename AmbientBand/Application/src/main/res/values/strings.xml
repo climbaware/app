@@ -33,6 +33,7 @@
     <string name="menu_disconnect">Disconnect</string>
     <string name="menu_scan">Scan</string>
     <string name="menu_stop">Stop</string>
+    <string name="climber_response_question">What did the climber respond?</string>
 
     <string-array name="participant_groups">
         <item>A-EH-VSL</item>
