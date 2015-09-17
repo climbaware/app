@@ -307,13 +307,10 @@ public class DeviceControlActivity extends Activity {
 
 
                 AlertDialog.Builder alert = new AlertDialog.Builder(DeviceControlActivity.this);
-                String grade = "HARD";
-                if(participant_group.split("-")[1].charAt(routeIndex) == 'E') {
-                    grade = "EASY";
-                }
+
                 writeToLog("reached_top");
 
-                alert.setTitle("Route is finished. Go to the " + grade + " route now.");
+                alert.setTitle("Route is finished. Go to the next route.");
 
 
                 nextbutton.setText("Start Climbing");
@@ -465,6 +462,12 @@ public class DeviceControlActivity extends Activity {
     }
 
 
+    private String climbingGrade() {
+        participant_group = (String) mParticipantGroupSpinner.getSelectedItem();
+        return String.valueOf(participant_group.split("-")[1].charAt(routeIndex));
+    }
+
+
     private void executeNextStudyAction(boolean climberHasResponded) {
 
         participant_group = (String) mParticipantGroupSpinner.getSelectedItem();
@@ -476,7 +479,7 @@ public class DeviceControlActivity extends Activity {
             // was "Start Study Before"
             nextbutton.setText("Send Notification");
             writeToLog("started_climbing", participant_group);
-            writeToLog("grade", participant_group.split("-")[1].charAt(routeIndex));
+            writeToLog("grade", climbingGrade());
 
 
             // generate random intensity sequence
@@ -528,7 +531,7 @@ public class DeviceControlActivity extends Activity {
 
                 if (routeIndex == 1) { // there exists two routes (easy and hard)
                     nextbutton.setText("Next Modality");
-                    nextbutton.setEnabled(true);
+                    nextbutton.setEnabled(false);
                     noResponseButton.setEnabled(false);
                     isClimbing = false;
                     routeIndex = 0;
