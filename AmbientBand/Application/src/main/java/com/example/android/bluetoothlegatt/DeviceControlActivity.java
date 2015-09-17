@@ -520,9 +520,13 @@ public class DeviceControlActivity extends Activity {
     }
 
     private void writeToLog(String text) {
-        log.append("\n" + text);
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
 
-        mLogFile.log("\n" + text);
+        String v = ts + "   " + text;
+        log.append("\n" + v);
+
+        mLogFile.log(v);
     }
 
     // share the study results

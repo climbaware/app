@@ -104,7 +104,15 @@ public class LogFile extends Observable {
 
     }
     public void createFreshLogFile() {
-        mLogFileNumber++;
+        int max = -1;
+        for(File f : getLogFiles()) {
+            String[] parts = f.getName().split("-");
+            int i = Integer.getInteger(parts[parts.length-1].split(".")[0]);
+            if(i > max)
+                max = i;
+        }
+        mLogFileNumber = max + 1;
+
         String dateString = new SimpleDateFormat("dd_MM_yyyy", Locale.US).format(new Date());
         mFileName = "climbaware-"+ dateString.toString() + "-" + mLogFileNumber;
         mLogFile = createLogFile(mFileName + mSuffix);
