@@ -322,6 +322,27 @@ public class DeviceControlActivity extends Activity {
     private void clearUI() {
     }
 
+    private void sendString(String s){
+        byte[] bs = s.getBytes();
+
+        BluetoothGattService ambientBandService = mBluetoothLeService.getService(UUID.fromString(AMBIENT_BAND_UUID_SERVICE));
+        if (ambientBandService == null) {
+            System.out.println("service null"); return;
+        }
+        BluetoothGattCharacteristic ambiendBandCharacteristic = ambientBandService.getCharacteristic(UUID.fromString(AMBIENT_BAND_UUID_CHAR));
+        if (ambiendBandCharacteristic == null) {
+            System.out.println("characteristic null"); return;
+        }
+        //ambiendBandCharacteristic.setValue(new byte[] {0x00,0x00,0x00,0x01, 0x02, 0x0B , (byte) 0xB8, (byte) (byte) 0xff, (byte) (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xfe});
+
+
+
+        ambiendBandCharacteristic.setValue(bs);
+        boolean status = mBluetoothLeService.writeCharacteristic(ambiendBandCharacteristic);
+        System.out.println("Write Status: " + status);
+
+    }
+
 
     private void sendByteString(byte[] bs){
         BluetoothGattService ambientBandService = mBluetoothLeService.getService(UUID.fromString(AMBIENT_BAND_UUID_SERVICE));
@@ -637,21 +658,22 @@ public class DeviceControlActivity extends Activity {
         final Button button_vibrate_short = (Button) findViewById(R.id.bt_vibrate_short);
         button_vibrate_short.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                sendBlink("1000", 250, 255);
+                tactileModality(1);
+
             }
         });
 
         final Button button_vibrate_normal = (Button) findViewById(R.id.bt_vibrate_normal);
         button_vibrate_normal.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                sendBlink("1000", 500, 255);
+                tactileModality(2);
             }
         });
 
         final Button button_vibrate_long = (Button) findViewById(R.id.bt_vibrate_long);
         button_vibrate_long.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                sendBlink("1000", 1000, 255);
+                tactileModality(3);
             }
         });
 
@@ -682,21 +704,21 @@ public class DeviceControlActivity extends Activity {
         final Button button_on_short = (Button) findViewById(R.id.bt_on_short);
         button_on_short.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                sendBlink("0111", 1000, 255);
+                visualModality(1);
             }
         });
 
         final Button button_on_normal = (Button) findViewById(R.id.bt_on_normal);
         button_on_normal.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                sendBlink("0111",2000,255);
+                visualModality(2);
             }
         });
 
         final Button button_on_long = (Button) findViewById(R.id.bt_on_long);
         button_on_long.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                sendBlink("0111",3000,255);
+                visualModality(3);
             }
         });
 
@@ -758,9 +780,10 @@ public class DeviceControlActivity extends Activity {
     private void visualModality(int intensity) {
         writeToLog("sent visual cue, intensity " + intensity);
 
-        sendBlink("0111",3000,255);
+        sendString("L" + Integer.toString(intensity));
+
         Toast.makeText(getBaseContext(), "Sent VISUAL cue.",
-                Toast.LENGTH_LONG).show();
+                Toast.LENGTH_SHORT).show();
 
     }
 
@@ -770,9 +793,10 @@ public class DeviceControlActivity extends Activity {
      */
     private void tactileModality(int intensity) {
         writeToLog("sent tactile cue, intensity " + intensity);
-        sendBlink("1000", 1000, 255);
+        sendString("V" + Integer.toString(intensity));
+
         Toast.makeText(getBaseContext(), "Sent TACTILE cue.",
-                Toast.LENGTH_LONG).show();
+                Toast.LENGTH_SHORT).show();
 
     }
 
