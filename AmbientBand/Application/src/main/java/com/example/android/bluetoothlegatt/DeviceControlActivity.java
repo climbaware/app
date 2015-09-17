@@ -89,10 +89,7 @@ public class DeviceControlActivity extends Activity {
     private Random rnd;
     FragmentManager fragmentManager;
 
-
     private EditText log;
-
-
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
 
@@ -102,10 +99,11 @@ public class DeviceControlActivity extends Activity {
 
     static String[] CLIMBERANSWERS = new String[] {"1", "2", "3"};
 
+    /**
+     * shows dialog to enter the climbers response about the
+     * perceived intensity of the visual/tactile/audible cue
+     */
     void showDialog() {
-        // DialogFragment.show() will take care of adding the fragment
-        // in a transaction.  We also want to remove any currently showing
-        // dialog, so make our own transaction and take care of that here.
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("dialog");
         if (prev != null) {
@@ -121,7 +119,7 @@ public class DeviceControlActivity extends Activity {
     /*
      * Climber Response Dialog
      */
-    public class ClimberResponseDialog extends DialogFragment {
+    static public class ClimberResponseDialog extends DialogFragment {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -140,7 +138,11 @@ public class DeviceControlActivity extends Activity {
 
     }
 
-    // Implementing Fisher–Yates shuffle
+    /**
+     * Implementing Fisher–Yates shuffle
+     * for randomly shffling an array
+     * @param ar array to be shuffeld
+     */
     private void shuffleArray(int[] ar)
     {
 
