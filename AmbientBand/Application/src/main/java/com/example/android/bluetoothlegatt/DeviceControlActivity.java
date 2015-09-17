@@ -722,17 +722,7 @@ public class DeviceControlActivity extends Activity {
             }
         });
 
-        final Button vnb_short = (Button) findViewById(R.id.bt_vnb_short);
-        vnb_short.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                sendBlinkSquence(new BlinkSequenceItem[]{
-                        new BlinkSequenceItem("1111", 250,1024),
-                        new BlinkSequenceItem("0000", 250,1024),
-                        new BlinkSequenceItem("1111", 250,1024),
 
-                });
-            }
-        });
 
     }
 
