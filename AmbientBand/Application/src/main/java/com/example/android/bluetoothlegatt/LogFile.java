@@ -23,6 +23,7 @@ import android.os.Handler;
 import android.os.StatFs;
 import android.text.Spanned;
 import android.text.SpannedString;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -88,13 +89,14 @@ public class LogFile extends Observable {
         mContext = context;
 
 
-        // Create a timestamp
-        String dateString = new SimpleDateFormat("dd_MM_yyyy", Locale.US).format(new Date());
 
         // Create the file name by sprintf'ing its parts into the filename string.
 
-        mFileName = "climbaware-"+ dateString.toString() + "-" + mLogFileNumber;
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
 
+        String dateString = new SimpleDateFormat("dd_MM_yyyy", Locale.US).format(new Date());
+        mFileName = "climbaware-"+ dateString.toString() + "-" + ts;
 
         // Commit the updates2
 
@@ -104,17 +106,11 @@ public class LogFile extends Observable {
 
     }
     public void createFreshLogFile() {
-        int max = -1;
-        for(File f : getLogFiles()) {
-            String[] parts = f.getName().split("-");
-            int i = Integer.getInteger(parts[parts.length-1].split(".")[0]);
-            if(i > max)
-                max = i;
-        }
-        mLogFileNumber = max + 1;
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
 
         String dateString = new SimpleDateFormat("dd_MM_yyyy", Locale.US).format(new Date());
-        mFileName = "climbaware-"+ dateString.toString() + "-" + mLogFileNumber;
+        mFileName = "climbaware-"+ dateString.toString() + "-" + ts;
         mLogFile = createLogFile(mFileName + mSuffix);
     }
 

@@ -271,6 +271,7 @@ public class DeviceControlActivity extends Activity {
                 //log.setText("");
                 writeToLog("changed group");
                 studyIsStarted = false;
+
             }
 
             @Override
@@ -325,6 +326,9 @@ public class DeviceControlActivity extends Activity {
 
                 writeToLog("reset initiated by study coordinator");
                 studyIsStarted = false;
+
+                mLogFile.createFreshLogFile();
+
                 return true;
 
             }
@@ -497,7 +501,6 @@ public class DeviceControlActivity extends Activity {
                         nextbutton.setEnabled(false);
                         noResponseButton.setEnabled(false);
 
-                        mLogFile.createFreshLogFile();
                     } else {
                         modalityIndex++;
                     }
