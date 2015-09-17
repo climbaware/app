@@ -88,11 +88,15 @@ public class DeviceControlActivity extends Activity {
     private boolean studyIsStarted = false;
     private int sentCueIndex = 0;
     private int modalityIndex = 0;
+    private int routeIndex = 0;
     private int[] intensitySequence;
     private Random rnd;
     private EditText log;
-    static String[] CLIMBERANSWERS = new String[] {"1", "2", "3"};
-
+    static String[] CLIMBERANSWERS = new String[] {"LOW 1", "MEDIUM 2", "HIGH 3"};
+    private Button noResponseButton;
+    private Chronometer mChronometer;
+    private Button nextbutton;
+    private static final int CUES_PER_MODALITY = 3;
 
 
     /**
@@ -248,9 +252,9 @@ public class DeviceControlActivity extends Activity {
         /*
           Study Control
          */
-        final Chronometer mChronometer = (Chronometer) findViewById(R.id.chronometer);
-        final Button nextbutton = (Button) findViewById(R.id.study_next);
-        final Button noResponseButton = (Button) findViewById(R.id.study_no_response);
+        mChronometer = (Chronometer) findViewById(R.id.chronometer);
+        nextbutton = (Button) findViewById(R.id.study_next);
+        noResponseButton = (Button) findViewById(R.id.study_no_response);
         noResponseButton.setEnabled(false);
         rnd = new Random();
 
@@ -281,109 +285,20 @@ public class DeviceControlActivity extends Activity {
          */
         noResponseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                timerIsRunning = false;
-                mChronometer.reset();
-
-                nextbutton.setText("Send Notification");
-
-
-                if(sentCueIndex == 3) {
-                    writeToLog("route finished");
-                }
-
-                if(sentCueIndex == 6) {
-                    nextbutton.setText("Next Modality");
-                    nextbutton.setEnabled(true);
-                    noResponseButton.setEnabled(false);
-                    studyIsStarted = false;
-                    writeToLog("modality finished");
-                    sentCueIndex = 0;
-
-                    //shareStudyResults();
-                }
-
-
-                sentCueIndex++;
-                writeToLog("no_response");
-
-
+                executeNextStudyAction(false);
             }
         });
 
         /*
-         *  NEXT Button
+         *  NEXT Button (States: Start Study/Send Notification/Climber Responded)
          *
          * UI behavior for conducting the user study
          * Button that starts the study and let's the coordinator
          * send the next visual/tactile/audible cue
          */
         nextbutton.setOnClickListener(new View.OnClickListener() {
-
             public void onClick(View v) {
-                String participant_group = (String) mParticipantGroupSpinner.getSelectedItem();
-
-                if (!studyIsStarted) {
-                    nextbutton.setText("Send Notification");
-                    studyIsStarted = true;
-                    writeToLog("study_started for: " + participant_group);
-
-                    // generate random intensity sequence
-                    intensitySequence = new int[]{1, 2, 3};
-                    shuffleArray(intensitySequence);
-                    writeToLog("generated new feedback intensity sequence: " + intensitySequence[0] + "," + intensitySequence[1] + "," + intensitySequence[2]);
-
-                    return;
-                }
-
-
-                if (!timerIsRunning) { // timer was not running, study coordinator sent modality feedback to climber
-
-                    mChronometer.start();
-                    timerIsRunning = true;
-
-
-                    nextbutton.setText("Climber responded");
-                    noResponseButton.setEnabled(true);
-                    sendNextFeedBack(participant_group);
-
-
-                } else { // timer was running, climber reacted to feedback
-                    mChronometer.stop();
-                    String time = mChronometer.getText().toString();
-                    timerIsRunning = false;
-                    mChronometer.reset();
-
-                    // show climber response dialog
-
-                    nextbutton.setText("Send Notification");
-
-                    writeToLog(time);
-                    showDialog();
-
-                    if (sentCueIndex == 3) {
-                        writeToLog("route finished");
-                    }
-
-                    if (sentCueIndex == 6) {
-                        nextbutton.setText("Next Modality");
-                        nextbutton.setEnabled(true);
-                        noResponseButton.setEnabled(false);
-                        studyIsStarted = false;
-                        writeToLog("modality finihsed");
-                        //shareStudyResults();
-                        sentCueIndex = 0;
-                        modalityIndex++;
-                    }
-
-                    sentCueIndex++;
-                    Toast.makeText(getBaseContext(), time,
-                            Toast.LENGTH_SHORT).show();
-
-
-                }
-
-
+                executeNextStudyAction(true);
             }
         });
 
@@ -400,6 +315,7 @@ public class DeviceControlActivity extends Activity {
 
                 modalityIndex = 0;
                 sentCueIndex = 0;
+                routeIndex = 0;
                 nextbutton.setText("Start Study");
 
                 nextbutton.setEnabled(true);
@@ -485,7 +401,7 @@ public class DeviceControlActivity extends Activity {
 
     }
 
-    private void sendNextFeedBack(String participant_group) {
+    private void sendModalityCue(String participant_group) {
         String[] pdata = participant_group.split("-");
         String group_number = pdata[0];
         String climbing_grade = pdata[1];
@@ -493,17 +409,106 @@ public class DeviceControlActivity extends Activity {
         if (modalityIndex < notification_modalities.length()) {
             switch (notification_modalities.charAt(modalityIndex)) {
                 case 'V':
-                    tactileModality(intensitySequence[modalityIndex]);
+                    tactileModality(intensitySequence[sentCueIndex]);
                     break;
                 case 'S':
-                    audibleModality(intensitySequence[modalityIndex]);
+                    audibleModality(intensitySequence[sentCueIndex]);
                     break;
                 case 'L':
-                    visualModality(intensitySequence[modalityIndex]);
+                    visualModality(intensitySequence[sentCueIndex]);
                     break;
             }
-            sentCueIndex++;
         }
+    }
+
+
+
+
+    private void executeNextStudyAction(boolean climberHasResponded) {
+
+        String participant_group = (String) mParticipantGroupSpinner.getSelectedItem();
+
+        // STATE 1: Initial Button State: Start Study
+        if (!studyIsStarted) {
+            studyIsStarted = true;
+
+            // was "Start Study Before"
+            nextbutton.setText("Send Notification");
+            writeToLog("study_started for: " + participant_group);
+
+            // generate random intensity sequence
+            intensitySequence = new int[]{1, 2, 3};
+            shuffleArray(intensitySequence);
+            writeToLog("generated intensity sequence: " + intensitySequence[0] + "," + intensitySequence[1] + "," + intensitySequence[2]);
+            return;
+        }
+
+        // STATE 2: Initial Button State: Send Notification
+        if (!timerIsRunning) { // timer was not running, study coordinator sent modality feedback to climber
+            timerIsRunning = true;
+
+            mChronometer.start();
+            nextbutton.setText("Climber responded");
+            noResponseButton.setEnabled(true);
+            sendModalityCue(participant_group);
+
+
+        // STATE 3: Initial Button State: Climber responded
+        } else { // timer was running, climber reacted to feedback
+            mChronometer.stop();
+            String time = mChronometer.getText().toString();
+            timerIsRunning = false;
+            mChronometer.reset();
+            writeToLog(time);
+            if(climberHasResponded) {
+                // show climber response dialog
+                showDialog();
+            } else {
+                writeToLog("no response");
+            }
+
+            /*
+             * determine next state
+             */
+            nextbutton.setText("Send Notification");
+
+            // next state --> STATE 2: sent notification of less than 3 were send before
+            if (sentCueIndex == CUES_PER_MODALITY-1) {
+                writeToLog("route finished");
+                nextbutton.setText("Send Notification");
+                sentCueIndex = 0;
+
+                if(routeIndex == 1) { // there exists two routes (easy and hard)
+                    nextbutton.setText("Next Modality");
+                    nextbutton.setEnabled(true);
+                    noResponseButton.setEnabled(false);
+                    studyIsStarted = false;
+                    routeIndex = 0;
+                    writeToLog("modality finihsed");
+                    //shareStudyResults();
+                    if(modalityIndex == 2) {
+                        nextbutton.setText("Done!");
+                        nextbutton.setEnabled(false);
+                        noResponseButton.setEnabled(false);
+                    } else {
+                        modalityIndex++;
+                    }
+                } else {
+                    routeIndex++;
+                }
+            } else {
+                sentCueIndex++;
+            }
+
+
+
+            Toast.makeText(getBaseContext(), time,
+                    Toast.LENGTH_SHORT).show();
+
+
+        }
+
+
     }
 
     private void writeToLog(String text) {
