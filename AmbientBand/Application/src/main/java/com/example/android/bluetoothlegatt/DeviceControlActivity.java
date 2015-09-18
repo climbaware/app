@@ -101,6 +101,7 @@ public class DeviceControlActivity extends Activity {
     private static final int CUES_PER_MODALITY = 3;
     private Button reachedTop;
     String participant_group;
+    Button pauseButton;
 
 
     /**
@@ -276,13 +277,57 @@ public class DeviceControlActivity extends Activity {
         });
 
         /**
-         * Button No Response
+         * Pause / Resume
          *
          * study_no_response (the climber did not react to the the audo/tactile/light feedback)
          */
-        noResponseButton.setOnClickListener(new View.OnClickListener() {
+        pauseButton = (Button) findViewById(R.id.pause);
+        pauseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                executeNextStudyAction(false);
+                if(timerIsRunning) {
+                    mChronometer.pause();
+                    timerIsRunning = false;
+                    pauseButton.setText("Resume");
+                } else {
+                    mChronometer.resume();
+                    timerIsRunning = true;
+                    pauseButton.setText("Pause");
+
+                }
+            }
+        });
+
+
+        /**
+         * Button Reached top
+         *
+         * mark the end of the climb
+         */
+        reachedTop.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                reachedTop.setEnabled(false);
+                nextbutton.setEnabled(true);
+                noResponseButton.setEnabled(true);
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(DeviceControlActivity.this);
+                writeToLog("reached_top");
+
+                if(modalityIndex < 3) {
+                    alert.setTitle("Route is finished. Go to the next route.");
+                } else {
+                    nextbutton.setEnabled(false);
+                    noResponseButton.setEnabled(false);
+
+                    alert.setTitle("Participant finished. Enter name and group of next participant and long press RESET.");
+                }
+
+                nextbutton.setText("Start Climbing");
+                noResponseButton.setEnabled(false);
+
+                isClimbing = false;
+
+                alert.show();
             }
         });
 

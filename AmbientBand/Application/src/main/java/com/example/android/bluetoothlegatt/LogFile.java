@@ -97,6 +97,7 @@ public class LogFile extends Observable {
 
         // Create the log file
         mLogFile = createLogFile(mFileName + mSuffix);
+
     }
     public void createFreshLogFile() {
         Long tsLong = System.currentTimeMillis()/1000;

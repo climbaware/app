@@ -16,6 +16,7 @@ import java.text.DecimalFormat;
 public class Chronometer extends TextView {
     @SuppressWarnings("unused")
 	private static final String TAG = "Chronometer";
+    private long pauseTime;
 
     public interface OnChronometerTickListener {
 
@@ -75,6 +76,7 @@ public class Chronometer extends TextView {
         mStarted = true;
         updateRunning();
     }
+
 
     public void stop() {
         mStarted = false;
