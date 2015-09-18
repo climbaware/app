@@ -149,7 +149,7 @@
                 android:focusable="false"
                 android:gravity="start"
 
-                 />
+                android:textSize="11sp" />
 
             <LinearLayout
                 android:orientation="horizontal"

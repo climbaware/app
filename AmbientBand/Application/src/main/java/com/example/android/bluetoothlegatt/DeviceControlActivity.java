@@ -258,6 +258,7 @@ public class DeviceControlActivity extends Activity {
         reachedTop = (Button) findViewById(R.id.reached_top);
         reachedTop.setEnabled(false);
         rnd = new Random();
+        resetStudy();
 
         /*
          * Participant group dropdown select
@@ -265,7 +266,7 @@ public class DeviceControlActivity extends Activity {
         mParticipantGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                resetStudy();
+
             }
 
             @Override
@@ -297,16 +298,21 @@ public class DeviceControlActivity extends Activity {
                 nextbutton.setEnabled(true);
                 noResponseButton.setEnabled(true);
 
-
-
                 AlertDialog.Builder alert = new AlertDialog.Builder(DeviceControlActivity.this);
-
                 writeToLog("reached_top");
 
-                alert.setTitle("Route is finished. Go to the next route.");
+                if(modalityIndex < 2) {
+                    alert.setTitle("Route is finished. Go to the next route.");
+                } else {
+                    nextbutton.setEnabled(false);
+                    noResponseButton.setEnabled(false);
 
+                    alert.setTitle("Participant finished. Enter name and group of next participant and long press RESET.");
+                }
 
                 nextbutton.setText("Start Climbing");
+                noResponseButton.setEnabled(false);
+
                 isClimbing = false;
 
                 alert.show();
@@ -339,6 +345,8 @@ public class DeviceControlActivity extends Activity {
 
             public boolean onLongClick(View v) {
                 resetStudy();
+                log.setText("");
+
                 return true;
 
             }
@@ -450,13 +458,11 @@ public class DeviceControlActivity extends Activity {
         nextbutton.setText("Start Study");
 
         nextbutton.setEnabled(true);
-        log.setText("");
 
         isClimbing = false;
         timerIsRunning = false;
 
         // END of the json file
-
         if(!mLogFile.isEmpty()) {
 
             mLogFile.log("]}");
@@ -501,6 +507,7 @@ public class DeviceControlActivity extends Activity {
 
             // was "Start Study Before"
             nextbutton.setText("Send Notification");
+            noResponseButton.setEnabled(false);
             writeToLog("started_climbing", participant_group);
             writeToLog("grade", climbingGrade());
 
@@ -529,6 +536,7 @@ public class DeviceControlActivity extends Activity {
             timerIsRunning = false;
             mChronometer.reset();
             writeToLog("response_time", time);
+            noResponseButton.setEnabled(false);
 
             if (climberHasResponded) {
                 // show climber response dialog
@@ -547,7 +555,6 @@ public class DeviceControlActivity extends Activity {
                 writeToLog("route_finished");
                 reachedTop.setEnabled(true);
                 nextbutton.setEnabled(false);
-                noResponseButton.setEnabled(false);
 
                 sentCueIndex = 0;
 
