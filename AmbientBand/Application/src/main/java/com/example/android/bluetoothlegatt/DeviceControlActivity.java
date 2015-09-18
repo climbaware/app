@@ -301,7 +301,7 @@ public class DeviceControlActivity extends Activity {
                 AlertDialog.Builder alert = new AlertDialog.Builder(DeviceControlActivity.this);
                 writeToLog("reached_top");
 
-                if(modalityIndex < 2) {
+                if(modalityIndex < 3) {
                     alert.setTitle("Route is finished. Go to the next route.");
                 } else {
                     nextbutton.setEnabled(false);
@@ -567,7 +567,7 @@ public class DeviceControlActivity extends Activity {
                     routeIndex = 0;
                     writeToLog("modality_finished");
                     //shareStudyResults();
-                    if (modalityIndex == 2) {
+                    if (modalityIndex == 3) {
                         nextbutton.setText("Participant Finished");
                         writeToLog("participant_finished");
 
