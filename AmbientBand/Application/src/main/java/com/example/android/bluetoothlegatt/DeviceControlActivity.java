@@ -265,13 +265,7 @@ public class DeviceControlActivity extends Activity {
         mParticipantGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mChronometer.reset();
-                nextbutton.setText("Start Study");
-                nextbutton.setEnabled(true);
-                //log.setText("");
-                //writeToLog("changed_group", (String) mParticipantGroupSpinner.getSelectedItem());
-                isClimbing = false;
-
+                resetStudy();
             }
 
             @Override
@@ -300,7 +294,6 @@ public class DeviceControlActivity extends Activity {
             public void onClick(View v) {
 
                 reachedTop.setEnabled(false);
-
                 nextbutton.setEnabled(true);
                 noResponseButton.setEnabled(true);
 
@@ -345,21 +338,7 @@ public class DeviceControlActivity extends Activity {
         findViewById(R.id.study_reset).setOnLongClickListener(new OnLongClickListener() {
 
             public boolean onLongClick(View v) {
-                mChronometer.reset();
-
-                modalityIndex = 0;
-                sentCueIndex = 0;
-                routeIndex = 0;
-                nextbutton.setText("Start Study");
-
-                nextbutton.setEnabled(true);
-                log.setText("");
-
-                writeToLog("reset");
-                isClimbing = false;
-
-                mLogFile.createFreshLogFile();
-
+                resetStudy();
                 return true;
 
             }
@@ -462,9 +441,53 @@ public class DeviceControlActivity extends Activity {
     }
 
 
+    private void resetStudy() {
+        mChronometer.reset();
+
+        modalityIndex = 0;
+        sentCueIndex = 0;
+        routeIndex = 0;
+        nextbutton.setText("Start Study");
+
+        nextbutton.setEnabled(true);
+        log.setText("");
+
+        isClimbing = false;
+        timerIsRunning = false;
+
+        // END of the json file
+
+        if(!mLogFile.isEmpty()) {
+
+            mLogFile.log("]}");
+            mLogFile.createFreshLogFile();
+        }
+
+        writeMetaDataToLogFile();
+
+        mLogFile.log(",\"events\":[");
+
+    }
+
     private String climbingGrade() {
         participant_group = (String) mParticipantGroupSpinner.getSelectedItem();
         return String.valueOf(participant_group.split("-")[1].charAt(routeIndex));
+    }
+
+    private void writeMetaDataToLogFile() {
+        // start of the JSON file
+        mLogFile.log("{\"metadata\":");
+
+        try {
+            JSONObject json = new JSONObject();
+            json.put("participant_group", mParticipantGroupSpinner.getSelectedItem());
+            json.put("participant_name", ((EditText) findViewById(R.id.participant_name)).getText());
+            mLogFile.log(json.toString());
+
+        } catch (JSONException e) {
+            mLogFile.log("{}");
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -540,6 +563,8 @@ public class DeviceControlActivity extends Activity {
                     if (modalityIndex == 2) {
                         nextbutton.setText("Participant Finished");
                         writeToLog("participant_finished");
+
+
                         nextbutton.setEnabled(false);
                         noResponseButton.setEnabled(false);
 
@@ -597,7 +622,7 @@ public class DeviceControlActivity extends Activity {
             json.put("description", text);
             json.put("data", data);
 
-            mLogFile.log(json.toString());
+            mLogFile.log(json.toString()+",");
 
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -625,7 +650,7 @@ public class DeviceControlActivity extends Activity {
 
         mArmbandController.sendString("L" + Integer.toString(intensity));
 
-        Toast.makeText(getBaseContext(), "Sent VISUAL cue.",
+        Toast.makeText(getBaseContext(), "Sent VISUAL (" + intensity + ") cue.",
                 Toast.LENGTH_SHORT).show();
 
     }
@@ -638,7 +663,7 @@ public class DeviceControlActivity extends Activity {
         writeToLog("tactile_cue", intensity, "sent tactile cue, intensity " + intensity);
         mArmbandController.sendString("V" + Integer.toString(intensity));
 
-        Toast.makeText(getBaseContext(), "Sent TACTILE cue.",
+        Toast.makeText(getBaseContext(), "Sent TACTILE (" + intensity + ") cue.",
                 Toast.LENGTH_SHORT).show();
 
     }
@@ -648,7 +673,7 @@ public class DeviceControlActivity extends Activity {
       * using a audible cue.
       */
     private void audibleModality(int intensity) {
-        writeToLog("audible_cue", intensity, "sent tactile cue, intensity " + intensity);
+        writeToLog("audible_cue", intensity, "sent audible cue, intensity " + intensity);
         switch (intensity){
             case 1:
                 sound.playShortResource(R.raw.one);
@@ -666,7 +691,7 @@ public class DeviceControlActivity extends Activity {
 
 
         
-        Toast.makeText(getBaseContext(), "Sent AUDITIVE cue.",
+        Toast.makeText(getBaseContext(), "Sent AUDIBLE (" + intensity + ") cue.",
                 Toast.LENGTH_SHORT).show();
     }
 

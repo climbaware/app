@@ -88,22 +88,15 @@ public class LogFile extends Observable {
         // Get the context from the caller
         mContext = context;
 
-
-
         // Create the file name by sprintf'ing its parts into the filename string.
-
         Long tsLong = System.currentTimeMillis()/1000;
         String ts = tsLong.toString();
 
         String dateString = new SimpleDateFormat("dd_MM_yyyy", Locale.US).format(new Date());
         mFileName = "climbaware-"+ dateString.toString() + "-" + ts;
 
-        // Commit the updates2
-
         // Create the log file
         mLogFile = createLogFile(mFileName + mSuffix);
-
-
     }
     public void createFreshLogFile() {
         Long tsLong = System.currentTimeMillis()/1000;
@@ -118,6 +111,11 @@ public class LogFile extends Observable {
     	mSuffix = suffix;
     	return getInstance(context);
     }
+
+    public boolean isEmpty() {
+        return mLogFile.length() == 0;
+    }
+
 
     /**
      * Create an sLogFileInstance of log file, or return the current sLogFileInstance

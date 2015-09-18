@@ -49,6 +49,15 @@
                 android:id="@+id/participant_group"
                 android:spinnerMode="dropdown" />
 
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:text="Name"
+                android:ems="10"
+                android:id="@+id/participant_name"
+                android:layout_gravity="center_horizontal" />
+
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
