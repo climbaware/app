@@ -23,6 +23,7 @@ import android.os.Handler;
 import android.os.StatFs;
 import android.text.Spanned;
 import android.text.SpannedString;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -87,26 +88,23 @@ public class LogFile extends Observable {
         // Get the context from the caller
         mContext = context;
 
-
-        // Create a timestamp
-        String dateString = new SimpleDateFormat("dd_MM_yyyy", Locale.US).format(new Date());
-
         // Create the file name by sprintf'ing its parts into the filename string.
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
 
-        mFileName = "climbaware-"+ dateString.toString() + "-" + mLogFileNumber;
-
-
-        // Commit the updates2
+        String dateString = new SimpleDateFormat("dd_MM_yyyy", Locale.US).format(new Date());
+        mFileName = "climbaware-"+ dateString.toString() + "-" + ts;
 
         // Create the log file
         mLogFile = createLogFile(mFileName + mSuffix);
 
-
     }
     public void createFreshLogFile() {
-        mLogFileNumber++;
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
+
         String dateString = new SimpleDateFormat("dd_MM_yyyy", Locale.US).format(new Date());
-        mFileName = "climbaware-"+ dateString.toString() + "-" + mLogFileNumber;
+        mFileName = "climbaware-"+ dateString.toString() + "-" + ts;
         mLogFile = createLogFile(mFileName + mSuffix);
     }
 
@@ -114,6 +112,11 @@ public class LogFile extends Observable {
     	mSuffix = suffix;
     	return getInstance(context);
     }
+
+    public boolean isEmpty() {
+        return mLogFile.length() == 0;
+    }
+
 
     /**
      * Create an sLogFileInstance of log file, or return the current sLogFileInstance
