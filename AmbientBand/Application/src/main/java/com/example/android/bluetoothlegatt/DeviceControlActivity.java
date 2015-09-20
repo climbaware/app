@@ -94,7 +94,7 @@ public class DeviceControlActivity extends Activity {
     private int[] intensitySequence;
     private Random rnd;
     private EditText log;
-    static String[] CLIMBERANSWERS = new String[]{"LOW 1", "MEDIUM 2", "HIGH 3"};
+    static String[] CLIMBERANSWERS = new String[]{"LOW 1 GREEN", "MEDIUM 2 ORANGE", "HIGH 3 RED"};
     private Button noResponseButton;
     private Chronometer mChronometer;
     private Button nextbutton;
